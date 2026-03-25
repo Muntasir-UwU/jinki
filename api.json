@@ -1,1 +1,30 @@
-
+{
+  "songs": [
+    { "id": 1, "title": "3Strikes", "url": "https://upcdn.io/kW2K8nP/raw/3Strikes.opus", "format": "opus" },
+    { "id": 2, "title": "AasaKooda", "url": "https://upcdn.io/kW2K8nP/raw/AasaKooda.opus", "format": "opus" },
+    { "id": 3, "title": "Bargad", "url": "https://upcdn.io/kW2K8nP/raw/Bargad.mp3", "format": "mp3" },
+    { "id": 4, "title": "BatasheKan", "url": "https://upcdn.io/kW2K8nP/raw/BatasheKan.opus", "format": "opus" },
+    { "id": 5, "title": "BeniKhuley", "url": "https://upcdn.io/kW2K8nP/raw/BeniKhuley.opus", "format": "opus" },
+    { "id": 6, "title": "BlueEyes", "url": "https://upcdn.io/kW2K8nP/raw/BlueEyes.mp3", "format": "mp3" },
+    { "id": 7, "title": "DJWaleyBabu", "url": "https://upcdn.io/kW2K8nP/raw/DJWaleyBabu.opus", "format": "opus" },
+    { "id": 8, "title": "Dancin", "url": "https://upcdn.io/kW2K8nP/raw/Dancin.opus", "format": "opus" },
+    { "id": 9, "title": "DieForYou", "url": "https://upcdn.io/kW2K8nP/raw/DieForYou.opus", "format": "opus" },
+    { "id": 10, "title": "Doubletake", "url": "https://upcdn.io/kW2K8nP/raw/Doubletake.opus", "format": "opus" },
+    { "id": 11, "title": "EkAkashTara", "url": "https://upcdn.io/kW2K8nP/raw/EkAkashTara.opus", "format": "opus" },
+    { "id": 12, "title": "HUSN", "url": "https://upcdn.io/kW2K8nP/raw/HUSN.opus", "format": "opus" },
+    { "id": 13, "title": "HarFunnMaula", "url": "https://upcdn.io/kW2K8nP/raw/HarFunnMaula.opus", "format": "opus" },
+    { "id": 14, "title": "Hotelroom", "url": "https://upcdn.io/kW2K8nP/raw/Hotelroom.opus", "format": "opus" },
+    { "id": 15, "title": "IntoIt", "url": "https://upcdn.io/kW2K8nP/raw/IntoIt.opus", "format": "opus" },
+    { "id": 16, "title": "IssTarah", "url": "https://upcdn.io/kW2K8nP/raw/IssTarah.mp3", "format": "mp3" },
+    { "id": 17, "title": "Kinni", "url": "https://upcdn.io/kW2K8nP/raw/Kinni.opus", "format": "opus" },
+    { "id": 18, "title": "LILABALI", "url": "https://upcdn.io/kW2K8nP/raw/LILABALI.opus", "format": "opus" },
+    { "id": 19, "title": "MoromorBuliKom", "url": "https://upcdn.io/kW2K8nP/raw/MoromorBuliKom.opus", "format": "opus" },
+    { "id": 20, "title": "Often", "url": "https://upcdn.io/kW2K8nP/raw/Often.opus", "format": "opus" },
+    { "id": 21, "title": "Prostab", "url": "https://upcdn.io/kW2K8nP/raw/Prostab.opus", "format": "opus" },
+    { "id": 22, "title": "SurroundSound", "url": "https://upcdn.io/kW2K8nP/raw/SurroundSound.opus", "format": "opus" },
+    { "id": 23, "title": "TereBina", "url": "https://upcdn.io/kW2K8nP/raw/TereBina.opus", "format": "opus" },
+    { "id": 24, "title": "TumiJaioNa", "url": "https://upcdn.io/kW2K8nP/raw/TumiJaioNa.opus", "format": "opus" },
+    { "id": 25, "title": "heavenandback", "url": "https://upcdn.io/kW2K8nP/raw/heavenandback.opus", "format": "opus" },
+    { "id": 26, "title": "wgft", "url": "https://upcdn.io/kW2K8nP/raw/wgft.opus", "format": "opus" }
+  ]
+}
