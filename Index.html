@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Jinka Player</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --accent:#e8607a;
+  --bg:#08080f;
+  --glass:rgba(255,255,255,0.04);
+  --glass2:rgba(255,255,255,0.07);
+  --bdr:rgba(255,255,255,0.08);
+  --txt:#f0ecff;
+  --txt2:rgba(240,236,255,0.45);
+  --txt3:rgba(240,236,255,0.22);
+  --rad:28px;
+}
+
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;font-weight:300;}
+
+/* GRAIN */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");background-size:160px;pointer-events:none;z-index:9999;mix-blend-mode:overlay;opacity:.55;}
+
+/* BG */
+#bg-wrap{position:fixed;inset:0;z-index:0;overflow:hidden;}
+.sphere{position:absolute;border-radius:50%;filter:blur(110px);opacity:.28;transition:background 1.6s ease;}
+#sp1{width:90vw;height:90vw;top:-30%;left:-20%;background:var(--accent);}
+#sp2{width:70vw;height:70vw;bottom:-20%;right:-20%;background:#6040b0;opacity:.15;}
+#bg-img{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  filter:blur(70px) saturate(1.5) brightness(.18);
+  transform:scale(1.2);
+  transition:background-image 1.4s ease,opacity 1s;
+  opacity:0;
+}
+#bg-img.on{opacity:1;}
+
+/* ═══════════════════════════════════
+   FLOWER SHOWER — pure CSS/JS petals
+   ═══════════════════════════════════ */
+#flower-canvas{
+  position:fixed;inset:0;z-index:1;
+  pointer-events:none;overflow:hidden;
+}
+.petal{
+  position:absolute;
+  top:-60px;
+  opacity:0;
+  will-change:transform,opacity;
+  animation:petalFall linear infinite;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+  pointer-events:none;
+  user-select:none;
+}
+
+/* The petal shapes — drawn with CSS */
+.petal-shape{
+  position:relative;
+  display:block;
+}
+/* Type 1: simple petal (teardrop) */
+.petal-shape.t1{
+  width:14px;height:20px;
+  background:radial-gradient(ellipse at 50% 30%, var(--pclr), transparent 70%);
+  border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+  opacity:.7;
+}
+/* Type 2: sakura-like */
+.petal-shape.t2{
+  width:16px;height:18px;
+  background:radial-gradient(ellipse at 40% 40%, var(--pclr), transparent 72%);
+  border-radius:80% 20% 55% 50% / 55% 50% 80% 20%;
+  opacity:.65;
+}
+/* Type 3: round petal */
+.petal-shape.t3{
+  width:12px;height:12px;
+  background:radial-gradient(circle at 40% 35%, var(--pclr), transparent 70%);
+  border-radius:50%;
+  opacity:.6;
+}
+/* Type 4: thin long petal */
+.petal-shape.t4{
+  width:8px;height:22px;
+  background:radial-gradient(ellipse at 50% 30%, var(--pclr), transparent 68%);
+  border-radius:50% 50% 50% 50% / 70% 70% 30% 30%;
+  opacity:.55;
+}
+/* Type 5: full flower emoji for variety */
+.petal-shape.t5{
+  font-size:16px;
+  line-height:1;
+  opacity:.4;
+}
+
+@keyframes petalFall{
+  0%{
+    opacity:0;
+    transform:translateY(0) translateX(0) rotate(0deg) scale(0.7);
+  }
+  8%{
+    opacity:var(--popacity,0.6);
+  }
+  50%{
+    transform:translateY(calc(50vh)) translateX(var(--drift,30px)) rotate(var(--spin,180deg)) scale(1);
+  }
+  92%{
+    opacity:var(--popacity,0.6);
+  }
+  100%{
+    opacity:0;
+    transform:translateY(calc(105vh + 60px)) translateX(var(--drift2,-20px)) rotate(var(--spin2,360deg)) scale(0.8);
+  }
+}
+
+/* secondary sway */
+@keyframes sway{
+  0%,100%{transform:translateX(0);}
+  25%{transform:translateX(12px);}
+  75%{transform:translateX(-10px);}
+}
+
+/* LAYOUT */
+#app{
+  position:relative;z-index:2;
+  height:100vh;max-width:440px;margin:0 auto;
+  display:grid;grid-template-rows:1fr auto;
+  padding:22px 22px 18px;gap:16px;
+}
+
+/* PLAYER SECTION */
+.player-sec{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* ART */
+.art-wrap{
+  position:relative;
+  width:min(72%,280px);aspect-ratio:1;
+  margin-bottom:clamp(16px,3.5vh,28px);flex-shrink:0;
+}
+.art-img{
+  width:100%;height:100%;object-fit:cover;
+  border-radius:var(--rad);position:relative;z-index:2;
+  box-shadow:0 24px 64px rgba(0,0,0,0.65);display:block;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.art-glow{
+  position:absolute;inset:-12px;border-radius:40px;
+  background:var(--accent);filter:blur(44px);
+  opacity:0;z-index:1;transition:opacity 1s;
+}
+.playing .art-glow{animation:breathe 4s ease-in-out infinite;}
+@keyframes breathe{0%,100%{opacity:.18;transform:scale(.94);}50%{opacity:.42;transform:scale(1.06);}}
+
+.like-btn{
+  position:absolute;top:12px;right:12px;z-index:3;
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.1);
+  color:#fff;font-size:.95rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,transform .2s;backdrop-filter:blur(8px);
+}
+.like-btn:hover{transform:scale(1.12);}
+.like-btn.on{color:var(--accent);}
+
+/* INFO */
+.song-info{width:100%;margin-bottom:clamp(10px,2vh,20px);}
+.now-label{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);opacity:.6;margin-bottom:5px;}
+.playing .now-label{opacity:1;}
+.song-title{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(1.6rem,5.5vw,2.4rem);line-height:1.05;color:var(--txt);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
+.song-artist{font-size:.82rem;color:var(--txt2);margin-top:5px;letter-spacing:.02em;}
+
+/* WAVEFORM PROGRESS */
+.wave-area{width:100%;margin-bottom:clamp(10px,2vh,18px);}
+.wave-box{
+  display:flex;align-items:flex-end;gap:2.5px;
+  height:38px;cursor:pointer;user-select:none;margin-bottom:7px;
+}
+.wb{
+  flex:1;border-radius:2px;
+  background:rgba(255,255,255,0.09);
+  transition:background .22s;
+}
+.wb.played{background:var(--accent);}
+.wb.head{
+  background:#fff;
+  box-shadow:0 0 7px rgba(255,255,255,0.55);
+}
+.time-row{display:flex;justify-content:space-between;font-size:.6rem;color:var(--txt2);letter-spacing:.04em;}
+
+/* CONTROLS */
+.controls{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;gap:4px;
+}
+.icon-btn{
+  width:42px;height:42px;border-radius:50%;
+  background:transparent;border:none;color:var(--txt2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:color .18s,background .18s,transform .15s;flex-shrink:0;
+}
+.icon-btn svg{width:20px;height:20px;fill:currentColor;}
+.icon-btn:hover{color:var(--txt);background:var(--glass2);}
+.icon-btn.on{color:var(--accent);}
+.icon-btn:active{transform:scale(.9);}
+
+.play-btn{
+  width:64px;height:64px;border-radius:50%;
+  background:#fff;border:none;color:#080810;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+  box-shadow:0 8px 28px rgba(255,255,255,0.2);
+  transition:transform .15s,box-shadow .2s;
+}
+.play-btn svg{width:24px;height:24px;fill:#080810;}
+.play-btn:hover{transform:scale(1.07);box-shadow:0 12px 36px rgba(255,255,255,0.26);}
+.play-btn:active{transform:scale(.94);}
+
+/* UP NEXT */
+.up-next{
+  background:var(--glass);border:1px solid var(--bdr);
+  border-radius:22px;padding:14px 14px 8px;
+  overflow:hidden;flex-shrink:0;
+}
+.sec-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--txt2);margin-bottom:10px;padding:0 4px;}
+.track-list{max-height:170px;overflow-y:auto;scrollbar-width:none;}
+.track-list::-webkit-scrollbar{display:none;}
+.track-row{
+  display:flex;align-items:center;gap:11px;
+  padding:8px 6px;border-radius:12px;cursor:pointer;transition:background .18s;
+}
+.track-row:hover{background:var(--glass2);}
+.track-row.act{background:rgba(232,96,122,0.08);border:1px solid rgba(232,96,122,0.2);}
+.track-thumb{width:42px;height:42px;border-radius:9px;object-fit:cover;flex-shrink:0;border:1px solid var(--bdr);}
+.track-meta{flex:1;min-width:0;}
+.track-title{font-size:.78rem;font-weight:400;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.track-artist{font-size:.65rem;color:var(--txt2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.track-wave{display:flex;align-items:center;gap:2px;height:14px;flex-shrink:0;opacity:0;}
+.track-row.act .track-wave{opacity:1;}
+.tw{width:2.5px;border-radius:2px;background:var(--accent);animation:wavebar .75s ease-in-out infinite;}
+.tw:nth-child(1){height:35%;animation-delay:0s;}
+.tw:nth-child(2){height:80%;animation-delay:.1s;}
+.tw:nth-child(3){height:55%;animation-delay:.2s;}
+.tw:nth-child(4){height:90%;animation-delay:.05s;}
+@keyframes wavebar{0%,100%{transform:scaleY(.3);}50%{transform:scaleY(1);}}
+
+/* LYRICS PANEL */
+#lyrics-panel{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(6,6,12,0.97);backdrop-filter:blur(28px);
+  display:flex;flex-direction:column;align-items:center;
+  transform:translateY(100%);
+  transition:transform .48s cubic-bezier(.16,1,.3,1);
+  overflow:hidden;
+}
+#lyrics-panel.open{transform:translateY(0);}
+
+.lyr-handle{width:38px;height:4px;border-radius:99px;background:rgba(255,255,255,0.15);margin:14px auto 0;flex-shrink:0;}
+
+.lyr-header{
+  width:100%;max-width:440px;padding:14px 22px 0;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.lyr-track{
+  font-family:'Instrument Serif',serif;font-size:1rem;
+  color:var(--txt2);font-style:italic;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;
+}
+.lyr-close{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--glass2);border:1px solid var(--bdr);
+  color:var(--txt2);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;
+}
+.lyr-close:hover{color:var(--txt);background:var(--glass);}
+
+.lyr-status{
+  font-size:.6rem;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase;
+  padding:8px 22px 0;width:100%;max-width:440px;flex-shrink:0;min-height:24px;
+}
+.lyr-status.loading{color:var(--accent);opacity:.75;}
+.lyr-status.error{color:#e87070;}
+.lyr-status.ok{color:rgba(100,220,130,0.7);}
+
+/* lyr-body scrolls */
+#lyr-body{flex:1;width:100%;max-width:440px;overflow-y:auto;padding:16px 28px 60px;scrollbar-width:none;}
+#lyr-body::-webkit-scrollbar{display:none;}
+
+/* rabbit-lyrics styles */
+.lrc-display{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(1.25rem,4.2vw,1.8rem);
+  line-height:1.9;text-align:center;
+}
+.lrc-display p,
+.lrc-display .line{
+  display:block;
+  padding:4px 12px;
+  border-radius:10px;
+  color:var(--txt3);
+  opacity:.35;
+  transform:scale(.97);
+  transition:color .45s ease, transform .45s cubic-bezier(.16,1,.3,1),
+             opacity .45s ease, background .45s ease, text-shadow .45s ease;
+  will-change:transform,opacity;
+}
+.lrc-display p.active,
+.lrc-display .line.active{
+  color:var(--txt);
+  opacity:1;
+  transform:scale(1.06);
+  background:rgba(255,255,255,0.04);
+  text-shadow:0 0 28px var(--accent);
+}
+.lrc-display p.before,
+.lrc-display .line.before{
+  color:rgba(240,236,255,0.3);
+  opacity:.3;
+  transform:scale(.96);
+}
+
+/* plain lyrics */
+.plain-lyrics{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(1.2rem,4vw,1.7rem);
+  line-height:1.85;text-align:center;color:var(--txt2);
+}
+.plain-lyrics p{margin-bottom:2px;}
+.plain-lyrics .blank{height:1em;display:block;}
+
+/* no lyrics */
+.no-lyrics{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:14px;color:var(--txt2);text-align:center;padding:0 24px;
+}
+.no-lyrics .nl-icon{font-size:2.2rem;}
+.no-lyrics .nl-txt{font-family:'Instrument Serif',serif;font-size:1.1rem;font-style:italic;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div id="bg-wrap">
+  <div class="sphere" id="sp1"></div>
+  <div class="sphere" id="sp2"></div>
+  <div id="bg-img"></div>
+</div>
+
+<!-- FLOWER SHOWER LAYER -->
+<div id="flower-canvas"></div>
+
+<!-- LYRICS PANEL -->
+<div id="lyrics-panel">
+  <div class="lyr-handle"></div>
+  <div class="lyr-header">
+    <div class="lyr-track" id="lyr-track-name">Lyrics</div>
+    <button class="lyr-close" onclick="closeLyrics()">✕</button>
+  </div>
+  <div class="lyr-status" id="lyr-status"></div>
+  <div id="lyr-body"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="player-sec" id="player-sec">
+
+    <div class="art-wrap" id="art-wrap">
+      <div class="art-glow"></div>
+      <img class="art-img" id="art-img" src="" alt=""/>
+      <button class="like-btn" id="like-btn" onclick="toggleLike()">♡</button>
+    </div>
+
+    <div class="song-info">
+      <div class="now-label" id="now-label">Now Playing</div>
+      <div class="song-title" id="song-title">—</div>
+      <div class="song-artist" id="song-artist"></div>
+    </div>
+
+    <div class="wave-area">
+      <div class="wave-box" id="wave-box"></div>
+      <div class="time-row">
+        <span id="cur-t">0:00</span>
+        <span id="dur-t">0:00</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="icon-btn" id="shuf-btn" onclick="toggleShuffle()" title="Shuffle">
+        <svg viewBox="0 0 24 24"><path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zm4.76-.29.89.9L19 7v1.5l2-2.5L19 3.5V5l-2.65 2.88zM4 18.59 5.41 20l14.8-14.8-1.41-1.4L4 18.59zm10.71.71L19 17v1.5l-2-2.5 2-2.5V15l-3.35 2.88-1.41-1.42 1.47-1.17-1.41-1.41L11.5 15.5l3.21 3.8z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="prevTrack()">
+        <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+      </button>
+      <button class="play-btn" id="play-btn" onclick="togglePlay()">
+        <svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="nextTrack()">
+        <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2-8.5L11.03 12 8 14.5V9.5zM16 6h2v12h-2z"/></svg>
+      </button>
+      <button class="icon-btn" id="lyr-btn" onclick="openLyrics()" title="Lyrics">
+        <svg viewBox="0 0 24 24"><path d="M21 15.5c0 .29-.06.56-.17.8A2.49 2.49 0 0 1 18.5 18c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5c.28 0 .55.08.77.22V11l-7 1.56V17c0 .28-.06.55-.17.8A2.49 2.49 0 0 1 9.5 19.5 1.5 1.5 0 0 1 8 18c0-.83.67-1.5 1.5-1.5.28 0 .55.08.77.22V9.42L21 7.28V15.5zM3 5h14v2H3zm0 4h10v2H3zm0 4h8v2H3z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="up-next">
+    <div class="sec-label">Up Next</div>
+    <div class="track-list" id="track-list"></div>
+  </div>
+</div>
+
+<audio id="aud" preload="auto"></audio>
+
+<script>
+/* ═══════════════════════════════════════════
+   FLOWER SHOWER ENGINE
+   Pure JS — spawns CSS petal elements that
+   drift and spin downward. Lives on z-index 1
+   (behind the player on z-index 2).
+   No impact on music player interaction.
+═══════════════════════════════════════════ */
+(function flowerShower(){
+  const canvas = document.getElementById('flower-canvas');
+  const MAX_PETALS = 35;       // on screen at once
+  const SPAWN_INTERVAL = 600;  // ms between spawns
+
+  // Color palettes for petals
+  const PALETTES = [
+    ['#ffb7c5','#ff91a4','#ff6f91','#ffc4d6','#e8607a'],  // pink / sakura
+    ['#c9a0dc','#d8b4fe','#e2bfff','#b388ff','#9c7cbe'],  // lavender
+    ['#ffe0b2','#ffcc80','#ffb347','#ffd699','#fff3e0'],  // warm gold
+    ['#f8bbd0','#f48fb1','#ec407a','#f06292','#fce4ec'],  // rose
+    ['#b2ebf2','#80deea','#4dd0e1','#a5d6a7','#c8e6c9'],  // spring cool
+  ];
+
+  let palette = PALETTES[0];
+  let petalCount = 0;
+
+  // Rotate palette every 20 seconds
+  setInterval(()=>{
+    palette = PALETTES[Math.floor(Math.random()*PALETTES.length)];
+  },20000);
+
+  const TYPES = ['t1','t2','t3','t4','t5'];
+  const EMOJIS = ['🌸','🏵️','💮','✿','❀','🌺','🌷'];
+
+  function randomBetween(a,b){ return a + Math.random()*(b-a); }
+
+  function spawnPetal(){
+    if(petalCount >= MAX_PETALS) return;
+
+    const el = document.createElement('div');
+    el.className = 'petal';
+
+    const type = TYPES[Math.floor(Math.random()*TYPES.length)];
+    const color = palette[Math.floor(Math.random()*palette.length)];
+    const size = randomBetween(0.7, 1.6);
+    const duration = randomBetween(8, 18);
+    const delay = randomBetween(0, 2);
+    const left = randomBetween(-5, 105);
+    const drift1 = randomBetween(-80, 80);
+    const drift2 = randomBetween(-60, 60);
+    const spin1 = randomBetween(90, 540) * (Math.random()>0.5?1:-1);
+    const spin2 = randomBetween(180, 720) * (Math.random()>0.5?1:-1);
+    const opacity = randomBetween(0.3, 0.7);
+
+    el.style.left = left + '%';
+    el.style.setProperty('--drift',  drift1 + 'px');
+    el.style.setProperty('--drift2', drift2 + 'px');
+    el.style.setProperty('--spin',   spin1 + 'deg');
+    el.style.setProperty('--spin2',  spin2 + 'deg');
+    el.style.setProperty('--popacity', opacity);
+    el.style.animationDuration = duration + 's';
+    el.style.animationDelay = delay + 's';
+
+    const shape = document.createElement('span');
+    shape.className = 'petal-shape ' + type;
+    shape.style.setProperty('--pclr', color);
+    shape.style.transform = 'scale(' + size + ')';
+
+    if(type === 't5'){
+      shape.textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+      shape.style.fontSize = (size * 14) + 'px';
+    }
+
+    el.appendChild(shape);
+    canvas.appendChild(el);
+    petalCount++;
+
+    // Remove after animation
+    const totalTime = (duration + delay) * 1000 + 200;
+    setTimeout(()=>{
+      el.remove();
+      petalCount--;
+    }, totalTime);
+  }
+
+  // Stagger initial burst
+  for(let i=0;i<12;i++){
+    setTimeout(spawnPetal, i*150);
+  }
+
+  // Continuous spawn
+  setInterval(spawnPetal, SPAWN_INTERVAL);
+})();
+
+
+/* ── TRACKS ── */
+const TRACKS = [
+  { "title": "3 Strikes", "artist": "Terror Jr", "album": "Bop City", "color": "#ff4d00", "thumb": "https://upcdn.io/kW2K8nP/raw/3strikes.jpg", "url": "https://upcdn.io/kW2K8nP/raw/3Strikes.opus" },
+  { "title": "Aasa Kooda", "artist": "Sai Abhyankkar", "album": "Single", "color": "#ffcc00", "thumb": "https://upcdn.io/kW2K8nP/raw/asakooda.jpg", "url": "https://upcdn.io/kW2K8nP/raw/AasaKooda.opus" },
+  { "title": "Bargad", "artist": "Talwiinder", "album": "Single", "color": "#4a4a4a", "thumb": "https://upcdn.io/kW2K8nP/raw/bargad.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Bargad.mp3" },
+  { "title": "Batashe Kan Pete", "artist": "Lopamudra Mitra", "album": "Single", "color": "#336699", "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-15-08_3463%5B1%5D.png", "url": "https://upcdn.io/kW2K8nP/raw/BatasheKan.opus" },
+  { "title": "Beni Khuley", "artist": "Habib Wahid", "album": "Single", "color": "#e91e63", "thumb": "https://upcdn.io/kW2K8nP/raw/benikhuley.jpg", "url": "https://upcdn.io/kW2K8nP/raw/BeniKhuley.opus" },
+  { "title": "Blue Eyes", "artist": "Yo Yo Honey Singh", "album": "Single", "color": "#0000ff", "thumb": "https://upcdn.io/kW2K8nP/raw/blueyes.jpg", "url": "https://upcdn.io/kW2K8nP/raw/BlueEyes.mp3" },
+  { "title": "DJ Waley Babu", "artist": "Badshah", "album": "Single", "color": "#000000", "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-14-45_8505%5B1%5D.png", "url": "https://upcdn.io/kW2K8nP/raw/DJWaleyBabu.opus" },
+  { "title": "Dancin", "artist": "Aaron Smith", "album": "Dancin Remix", "color": "#9c27b0", "thumb": "https://upcdn.io/kW2K8nP/raw/Dancin.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Dancin.opus" },
+  { "title": "Die For You", "artist": "The Weeknd", "album": "Starboy", "color": "#8844cc", "thumb": "https://upcdn.io/kW2K8nP/raw/dieforyou.jpg", "url": "https://upcdn.io/kW2K8nP/raw/DieForYou.opus" },
+  { "title": "Double Take", "artist": "dhruv", "album": "raindrops", "color": "#90caf9", "thumb": "https://upcdn.io/kW2K8nP/raw/doubletake.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Doubletake.opus" },
+  { "title": "Ek Akash Tara", "artist": "Lucky Akhand", "album": "Single", "color": "#37474f", "thumb": "https://upcdn.io/kW2K8nP/raw/ekakashtarah.jpg", "url": "https://upcdn.io/kW2K8nP/raw/EkAkashTara.opus" },
+  { "title": "HUSN", "artist": "Anuv Jain", "album": "Single", "color": "#8d6e63", "thumb": "https://upcdn.io/kW2K8nP/raw/husn.jpg", "url": "https://upcdn.io/kW2K8nP/raw/HUSN.opus" },
+  { "title": "Har Funn Maula", "artist": "Vishal-Shekhar", "album": "Koi Jaane Na", "color": "#ffc107", "thumb": "https://upcdn.io/kW2K8nP/raw/harfunmaula.jpg", "url": "https://upcdn.io/kW2K8nP/raw/HarFunnMaula.opus" },
+  { "title": "Hotel Room", "artist": "Post Malone", "album": "Stoney", "color": "#795548", "thumb": "https://upcdn.io/kW2K8nP/raw/hotelroom.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Hotelroom.opus" },
+  { "title": "Into It", "artist": "Chase Atlantic", "album": "Chase Atlantic", "color": "#000000", "thumb": "https://upcdn.io/kW2K8nP/raw/intoit.jpg", "url": "https://upcdn.io/kW2K8nP/raw/IntoIt.opus" },
+  { "title": "Iss Tarah", "artist": "Arijit Singh", "album": "Single", "color": "#b71c1c", "thumb": "https://upcdn.io/kW2K8nP/raw/isstarah.jpg", "url": "https://upcdn.io/kW2K8nP/raw/IssTarah.mp3" },
+  { "title": "Kinni", "artist": "Diljit Dosanjh", "album": "Ghost", "color": "#4caf50", "thumb": "https://upcdn.io/kW2K8nP/raw/kinni.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Kinni.opus" },
+  { "title": "LILABALI", "artist": "Coke Studio Bangla", "album": "Season 2", "color": "#d32f2f", "thumb": "https://upcdn.io/kW2K8nP/raw/Alltypes.jpg", "url": "https://upcdn.io/kW2K8nP/raw/LILABALI.opus" },
+  { "title": "Moromor Buli Kom", "artist": "Papon", "album": "Single", "color": "#2e7d32", "thumb": "https://upcdn.io/kW2K8nP/raw/mormor.jpg", "url": "https://upcdn.io/kW2K8nP/raw/MoromorBuliKom.opus" },
+  { "title": "Often", "artist": "The Weeknd", "album": "Beauty Behind the Madness", "color": "#121212", "thumb": "https://upcdn.io/kW2K8nP/raw/often.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Often.opus" },
+  { "title": "Prostab", "artist": "Kazi Shuvo", "album": "Single", "color": "#607d8b", "thumb": "https://upcdn.io/kW2K8nP/raw/prostab.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Prostab.opus" },
+  { "title": "Surround Sound", "artist": "JID", "album": "The Forever Story", "color": "#ffeb3b", "thumb": "https://upcdn.io/kW2K8nP/raw/surround.jpg", "url": "https://upcdn.io/kW2K8nP/raw/SurroundSound.opus" },
+  { "title": "Tere Bina", "artist": "A.R. Rahman", "album": "Guru", "color": "#009688", "thumb": "https://upcdn.io/kW2K8nP/raw/terebina.jpg", "url": "https://upcdn.io/kW2K8nP/raw/TereBina.opus" },
+  { "title": "Tumi Jaio Na", "artist": "Coke Studio Bangla", "album": "Season 2", "color": "#ff5722", "thumb": "https://upcdn.io/kW2K8nP/raw/tumijaionah.jpg", "url": "https://upcdn.io/kW2K8nP/raw/TumiJaioNa.opus" },
+  { "title": "Heaven and Back", "artist": "Chase Atlantic", "album": "PHASES", "color": "#ce93d8", "thumb": "https://upcdn.io/kW2K8nP/raw/heavenandback.jpg", "url": "https://upcdn.io/kW2K8nP/raw/heavenandback.opus" },
+  { "title": "WGFT", "artist": "The Kid LAROI", "album": "F*CK LOVE", "color": "#000000", "thumb": "https://upcdn.io/kW2K8nP/raw/wgft.jpg", "url": "https://upcdn.io/kW2K8nP/raw/wgft.opus" },
+  { "title": "Bairan Banjaare", "artist": "Sunidhi Chauhan", "album": "Single", "color": "#fb8c00", "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-05-28_6850%5B1%5D.png", "url": "https://upcdn.io/kW2K8nP/raw/Bairan%20Banjaare%20(pagalall.com).mp3" }
+];
+
+/* ── STATE ── */
+const aud = document.getElementById('aud');
+let cur = 0, isPlaying = false, isShuffle = false;
+const liked = new Set();
+let lyricsOpen = false;
+let lyricsCache = {};
+let rabbitEl = null;
+let parsedLyrics = [];
+let activeIdx    = -1;
+
+/* ══════════════════════════════════════════
+   LANGUAGE DETECTION FOR LYRICS
+   ──────────────────────────────────────────
+   RULES:
+   ✅ English (Latin) letters     — always accepted
+   ✅ Bangla (Bengali) script     — always accepted
+   ❌ Hindi (Devanagari)          — REJECTED (must be romanized/English letters)
+   ❌ Arabic, CJK, Cyrillic, etc. — REJECTED (must be romanized/English letters)
+
+   Reason: The playlist has Bangla songs whose native
+   script is beautiful and readable for the audience.
+   Hindi and other non-Latin/non-Bangla scripts get
+   fetched only in romanized (English letter) form so
+   every user can read along regardless of script.
+══════════════════════════════════════════ */
+function isAcceptableLettered(text) {
+  if (!text || typeof text !== 'string') return false;
+  // Strip LRC timestamps like [01:23.45]
+  const cleaned = text.replace(/\[\d{2}:\d{2}([.:]\d{1,3})?\]/g, '').trim();
+  if (!cleaned) return true; // empty lines are fine
+
+  // Count ACCEPTED script chars: Latin + Bangla
+  const latinChars  = (cleaned.match(/[a-zA-Z\u00C0-\u024F]/g) || []).length;
+  const banglaChars = (cleaned.match(/[\u0980-\u09FF]/g) || []).length;
+  const acceptedChars = latinChars + banglaChars;
+
+  // Count REJECTED script chars (Devanagari, Arabic, CJK, Cyrillic, Gurmukhi, Tamil, Telugu, etc.)
+  const rejectedChars = (cleaned.match(/[\u0900-\u097F\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0600-\u06FF\u0750-\u077F\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF\u0400-\u04FF\u0500-\u052F\u0E00-\u0E7F\u1000-\u109F]/g) || []).length;
+
+  // If any REJECTED script characters exist → not acceptable
+  if (rejectedChars > 0) return false;
+
+  // Must have at least some accepted script characters
+  const totalAlpha = acceptedChars + rejectedChars;
+  if (totalAlpha === 0) return true; // punctuation/numbers only — fine
+
+  return acceptedChars / totalAlpha > 0.7;
+}
+
+/* Check entire lyrics block — majority of lines must pass */
+function isLyricsAcceptable(lyricsText) {
+  if (!lyricsText) return false;
+  const lines = lyricsText.split('\n').filter(l => {
+    const cleaned = l.replace(/\[\d{2}:\d{2}([.:]\d{1,3})?\]/g, '').trim();
+    return cleaned.length > 0;
+  });
+  if (lines.length === 0) return true;
+  const goodLines = lines.filter(l => isAcceptableLettered(l)).length;
+  // At least 80% of non-empty lines must be acceptable
+  return (goodLines / lines.length) >= 0.8;
+}
+
+/* ── WAVEFORM ── */
+const BAR_COUNT = 52;
+const waveBox = document.getElementById('wave-box');
+
+function buildWave(seed) {
+  waveBox.innerHTML = '';
+  for (let i = 0; i < BAR_COUNT; i++) {
+    const h = 12 + (Math.abs(Math.sin(seed * 9.1 + i * 0.43 + Math.cos(i * 0.27 + seed))) * 88);
+    const bar = document.createElement('div');
+    bar.className = 'wb';
+    bar.style.height = h + '%';
+    bar.dataset.i = i;
+    bar.addEventListener('click', () => {
+      if (aud.duration) aud.currentTime = (i / BAR_COUNT) * aud.duration;
+    });
+    waveBox.appendChild(bar);
+  }
+}
+
+function updateWave() {
+  if (!aud.duration) return;
+  const pct = aud.currentTime / aud.duration;
+  const headIdx = Math.round(pct * (BAR_COUNT - 1));
+  waveBox.querySelectorAll('.wb').forEach((b, i) => {
+    b.classList.toggle('played', i < headIdx);
+    b.classList.toggle('head',   i === headIdx);
+    if (i !== headIdx) b.classList.remove('played', 'head');
+    if (i < headIdx) b.classList.add('played');
+    if (i === headIdx) b.classList.add('head');
+  });
+}
+
+/* ── LOAD TRACK ── */
+function loadTrack(idx, autoplay) {
+  cur = (idx + TRACKS.length) % TRACKS.length;
+  const t = TRACKS[cur];
+
+  document.getElementById('song-title').textContent   = t.title;
+  document.getElementById('song-artist').textContent  = t.artist;
+  document.getElementById('art-img').src              = t.thumb;
+  document.getElementById('bg-img').style.backgroundImage = `url(${t.thumb})`;
+  document.getElementById('bg-img').classList.add('on');
+  document.getElementById('lyr-track-name').textContent = `${t.title} — ${t.artist}`;
+  document.getElementById('sp1').style.background    = t.color;
+  document.documentElement.style.setProperty('--accent', t.color);
+
+  document.getElementById('like-btn').textContent = liked.has(cur) ? '♥' : '♡';
+  document.getElementById('like-btn').classList.toggle('on', liked.has(cur));
+
+  parsedLyrics = [];
+  activeIdx    = -1;
+  buildWave(cur + 1);
+  document.getElementById('cur-t').textContent = '0:00';
+  document.getElementById('dur-t').textContent = '0:00';
+
+  aud.src = t.url;
+  aud.load();
+  if (autoplay) { aud.play().catch(() => {}); }
+  else { setPlaying(false); }
+
+  renderQueue();
+  if (lyricsOpen) renderLyricsPanel();
+}
+
+/* ── PLAYBACK ── */
+function setPlaying(p) {
+  isPlaying = p;
+  document.getElementById('play-icon').innerHTML = p
+    ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+    : '<path d="M8 5v14l11-7z"/>';
+  document.getElementById('player-sec').classList.toggle('playing', p);
+}
+function togglePlay() {
+  if (aud.paused) { aud.play().catch(() => {}); }
+  else { aud.pause(); }
+}
+function nextTrack() { loadTrack(isShuffle ? Math.floor(Math.random() * TRACKS.length) : cur + 1, isPlaying); }
+function prevTrack() { aud.currentTime > 3 ? (aud.currentTime = 0) : loadTrack(cur - 1, isPlaying); }
+function toggleShuffle() { isShuffle = !isShuffle; document.getElementById('shuf-btn').classList.toggle('on', isShuffle); }
+function toggleLike() {
+  liked.has(cur) ? liked.delete(cur) : liked.add(cur);
+  document.getElementById('like-btn').textContent = liked.has(cur) ? '♥' : '♡';
+  document.getElementById('like-btn').classList.toggle('on', liked.has(cur));
+}
+
+/* ── AUDIO EVENTS ── */
+const fmt = s => isNaN(s) ? '0:00' : `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+aud.addEventListener('timeupdate', () => {
+  document.getElementById('cur-t').textContent = fmt(aud.currentTime);
+  document.getElementById('dur-t').textContent = fmt(aud.duration);
+  updateWave();
+  updateSyncedLyrics();
+});
+aud.addEventListener('loadedmetadata', () => {
+  fetchLyrics(cur, aud.duration);
+});
+aud.addEventListener('play',  () => setPlaying(true));
+aud.addEventListener('pause', () => setPlaying(false));
+aud.addEventListener('ended', () => nextTrack());
+
+/* ── QUEUE ── */
+function renderQueue() {
+  document.getElementById('track-list').innerHTML = TRACKS.map((t, i) => `
+    <div class="track-row ${i === cur ? 'act' : ''}" onclick="loadTrack(${i},true)">
+      <img class="track-thumb" src="${t.thumb}" alt="${t.title}"/>
+      <div class="track-meta">
+        <div class="track-title">${t.title}</div>
+        <div class="track-artist">${t.artist}</div>
+      </div>
+      <div class="track-wave">
+        <div class="tw"></div><div class="tw"></div><div class="tw"></div><div class="tw"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════
+   LRC PARSER
+════════════════════════════════════════ */
+function parseLyric(lrc) {
+  const regex = /^\[(?<time>\d{2}:\d{2}(\.\d{1,3})?)\](?<text>.*)/;
+  const lines  = lrc.split('\n');
+  const output = [];
+
+  lines.forEach(line => {
+    const match = line.match(regex);
+    if (!match) return;
+    const { time, text } = match.groups;
+    const trimmed = text.trim();
+    output.push({ time: parseTime(time), text: trimmed });
+  });
+
+  function parseTime(t) {
+    const [min, sec] = t.split(':');
+    return parseInt(min) * 60 + parseFloat(sec);
+  }
+
+  return output;
+}
+
+/* ── SYNCER ── */
+function syncLyric(lyrics, time) {
+  const scores = [];
+  lyrics.forEach(lyric => {
+    const score = time - lyric.time;
+    if (score >= 0) scores.push(score);
+  });
+  if (!scores.length) return null;
+  return scores.indexOf(Math.min(...scores));
+}
+
+/* ── UPDATE SYNCED LYRICS on timeupdate ── */
+function updateSyncedLyrics() {
+  if (!lyricsOpen || !parsedLyrics.length) return;
+  const idx = syncLyric(parsedLyrics, aud.currentTime);
+  if (idx === null || idx === activeIdx) return;
+  activeIdx = idx;
+
+  const body  = document.getElementById('lyr-body');
+  const lines = body.querySelectorAll('.lrc-display p');
+  lines.forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+    el.classList.toggle('before', i < idx);
+  });
+
+  const active = lines[idx];
+  if (active) {
+    const bodyRect   = body.getBoundingClientRect();
+    const lineRect   = active.getBoundingClientRect();
+    const offset     = lineRect.top - bodyRect.top - bodyRect.height / 2 + lineRect.height / 2;
+    body.scrollBy({ top: offset, behavior: 'smooth' });
+  }
+}
+
+/* ════════════════════════════════════════
+   LYRICS FETCHER — lrclib.net
+   ──────────────────────────────────────
+   ★ Accepts: English (Latin) + Bangla (Bengali) script lyrics
+   ★ Rejects: Hindi (Devanagari), Arabic, CJK, Cyrillic, etc.
+     → For those languages, only romanized (English letter) versions accepted
+
+   REASON: The playlist serves a Bengali + English speaking audience.
+   Bangla songs should show their beautiful native বাংলা script.
+   Hindi songs like "HUSN", "Har Funn Maula" etc. are better served
+   in romanized form so everyone can sing along without needing
+   to read Devanagari. This keeps the experience consistent and
+   accessible — you either read English or Bangla, nothing else.
+════════════════════════════════════════ */
+async function fetchLyrics(trackIdx, audioDuration) {
+  if (lyricsCache[trackIdx] !== undefined) return;
+  lyricsCache[trackIdx] = null; // mark as loading
+
+  const t = TRACKS[trackIdx];
+
+  async function tryGet(url) {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+  }
+
+  const DURATION_TOLERANCE = 15;
+
+  /*
+   * Score a single result — lower is better.
+   * Returns null if lyrics are NOT in an acceptable script.
+   */
+  function scoreResult(r, dur) {
+    const hasSynced = r.syncedLyrics && isLyricsAcceptable(r.syncedLyrics);
+    const hasPlain  = r.plainLyrics  && isLyricsAcceptable(r.plainLyrics);
+
+    if (!hasSynced && !hasPlain) return null; // unacceptable script — skip
+
+    let score = 0;
+    // Duration closeness
+    if (dur && r.duration) {
+      score += Math.abs(r.duration - dur);
+    }
+    // Prefer synced over plain
+    if (hasSynced) score -= 5;
+
+    return { result: r, score, hasSynced, hasPlain };
+  }
+
+  /*
+   * From an array of lrclib results, pick the best
+   * acceptable (English/Bangla) one closest to audio duration.
+   */
+  function pickBestAcceptable(results, dur) {
+    if (!Array.isArray(results) || !results.length) return null;
+
+    const scored = results
+      .map(r => scoreResult(r, dur))
+      .filter(s => s !== null);
+
+    if (!scored.length) return null;
+
+    scored.sort((a, b) => a.score - b.score);
+    return scored[0];
+  }
+
+  try {
+    let bestPick = null;
+
+    // ── ATTEMPT 1: Direct /api/get ──
+    try {
+      const qGet = new URLSearchParams({ track_name: t.title, artist_name: t.artist });
+      if (t.album)       qGet.append('album_name', t.album);
+      if (audioDuration) qGet.append('duration', Math.round(audioDuration));
+
+      const data = await tryGet(`https://lrclib.net/api/get?${qGet}`);
+
+      if (data) {
+        const durOk = !audioDuration || !data.duration ||
+                      Math.abs(data.duration - audioDuration) <= DURATION_TOLERANCE;
+
+        if (durOk) {
+          const s = scoreResult(data, audioDuration);
+          if (s) bestPick = s;
+        }
+      }
+    } catch(e) { /* /api/get failed — try search */ }
+
+    // ── ATTEMPT 2: Search ──
+    try {
+      const qSearch = new URLSearchParams({ q: `${t.title} ${t.artist}` });
+      const results = await tryGet(`https://lrclib.net/api/search?${qSearch}`);
+
+      if (Array.isArray(results) && results.length) {
+        const searchPick = pickBestAcceptable(results, audioDuration);
+
+        if (searchPick) {
+          if (!bestPick || searchPick.score < bestPick.score) {
+            bestPick = searchPick;
+          }
+        }
+      }
+    } catch(e) { /* search failed */ }
+
+    // ── ATTEMPT 3: Broader search with just the title ──
+    if (!bestPick) {
+      try {
+        const qBroad = new URLSearchParams({ q: t.title });
+        const results2 = await tryGet(`https://lrclib.net/api/search?${qBroad}`);
+
+        if (Array.isArray(results2) && results2.length) {
+          const broadPick = pickBestAcceptable(results2, audioDuration);
+          if (broadPick) bestPick = broadPick;
+        }
+      } catch(e) { /* broad search failed */ }
+    }
+
+    // ── ATTEMPT 4: Search with "romanized" keyword ──
+    if (!bestPick) {
+      try {
+        const qRoman = new URLSearchParams({ q: `${t.title} romanized` });
+        const results3 = await tryGet(`https://lrclib.net/api/search?${qRoman}`);
+
+        if (Array.isArray(results3) && results3.length) {
+          const romanPick = pickBestAcceptable(results3, audioDuration);
+          if (romanPick) bestPick = romanPick;
+        }
+      } catch(e) { /* romanized search failed */ }
+    }
+
+    // ── Build final cache entry ──
+    if (bestPick) {
+      if (bestPick.hasSynced) {
+        lyricsCache[trackIdx] = { type: 'lrc', content: bestPick.result.syncedLyrics };
+      } else if (bestPick.hasPlain) {
+        lyricsCache[trackIdx] = { type: 'plain', content: bestPick.result.plainLyrics };
+      } else {
+        lyricsCache[trackIdx] = { type: 'none' };
+      }
+    } else {
+      lyricsCache[trackIdx] = { type: 'none' };
+    }
+  } catch(e) {
+    lyricsCache[trackIdx] = { type: 'none' };
+  }
+
+  if (lyricsOpen && trackIdx === cur) renderLyricsPanel();
+}
+
+/* ── LYRICS PANEL RENDER ── */
+function renderLyricsPanel() {
+  const body   = document.getElementById('lyr-body');
+  const status = document.getElementById('lyr-status');
+
+  parsedLyrics = [];
+  activeIdx    = -1;
+  rabbitEl     = null;
+  body.innerHTML = '';
+
+  const cached = lyricsCache[cur];
+
+  if (cached === null || cached === undefined) {
+    status.textContent = '⟳ Fetching lyrics…';
+    status.className   = 'lyr-status loading';
+    return;
+  }
+
+  if (cached.type === 'none') {
+    status.textContent = '✗ No acceptable lyrics found';
+    status.className   = 'lyr-status error';
+    body.innerHTML = `
+      <div class="no-lyrics">
+        <span class="nl-icon">🎵</span>
+        <span class="nl-txt">No English or Bangla lyrics available for this track.</span>
+      </div>`;
+    return;
+  }
+
+  if (cached.type === 'lrc') {
+    status.textContent = '✓ Synced lyrics · lrclib.net';
+    status.className   = 'lyr-status ok';
+
+    parsedLyrics = parseLyric(cached.content);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'lrc-display';
+
+    parsedLyrics.forEach(({ text }) => {
+      const p = document.createElement('p');
+      p.textContent = text;
+      wrap.appendChild(p);
+    });
+
+    body.appendChild(wrap);
+
+    activeIdx = -1;
+    updateSyncedLyrics();
+    return;
+  }
+
+  if (cached.type === 'plain') {
+    status.textContent = '✓ Lyrics · lrclib.net';
+    status.className   = 'lyr-status ok';
+    const div = document.createElement('div');
+    div.className = 'plain-lyrics';
+    div.innerHTML = cached.content
+      .split('\n')
+      .map(l => l.trim() === '' ? '<span class="blank"></span>' : `<p>${escHtml(l)}</p>`)
+      .join('');
+    body.appendChild(div);
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── OPEN / CLOSE ── */
+function openLyrics() {
+  lyricsOpen = true;
+  document.getElementById('lyrics-panel').classList.add('open');
+  document.getElementById('lyr-btn').classList.add('on');
+  renderLyricsPanel();
+
+  if (lyricsCache[cur] === null) {
+    const poll = setInterval(() => {
+      if (lyricsCache[cur] !== null) {
+        clearInterval(poll);
+        if (lyricsOpen) renderLyricsPanel();
+      }
+    }, 350);
+  }
+}
+
+function closeLyrics() {
+  lyricsOpen = false;
+  document.getElementById('lyrics-panel').classList.remove('open');
+  document.getElementById('lyr-btn').classList.remove('on');
+}
+
+/* Swipe down to close */
+let _ty0 = 0;
+document.getElementById('lyrics-panel').addEventListener('touchstart', e => { _ty0 = e.touches[0].clientY; }, { passive: true });
+document.getElementById('lyrics-panel').addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - _ty0 > 80) closeLyrics(); }, { passive: true });
+
+/* ── INIT ── */
+loadTrack(0, false);
+</script>
+</body>
+</html>
