@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Jinki player</title>
+<title>Jinka Player</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -397,6 +397,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       <button class="icon-btn" id="shuf-btn" onclick="toggleShuffle()" title="Shuffle">
         <svg viewBox="0 0 24 24"><path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zm4.76-.29.89.9L19 7v1.5l2-2.5L19 3.5V5l-2.65 2.88zM4 18.59 5.41 20l14.8-14.8-1.41-1.4L4 18.59zm10.71.71L19 17v1.5l-2-2.5 2-2.5V15l-3.35 2.88-1.41-1.42 1.47-1.17-1.41-1.41L11.5 15.5l3.21 3.8z"/></svg>
       </button>
+      <button class="icon-btn" id="repeat-btn" onclick="toggleRepeat()" title="Repeat">
+        <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+      </button>
       <button class="icon-btn" onclick="prevTrack()">
         <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
       </button>
@@ -427,7 +430,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
    drift and spin downward. Lives on z-index 1
    (behind the player on z-index 2).
    No impact on music player interaction.
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════ */    
 (function flowerShower(){
   const canvas = document.getElementById('flower-canvas');
   const MAX_PETALS = 35;       // on screen at once
@@ -547,29 +550,18 @@ const TRACKS = [
 
 /* ── STATE ── */
 const aud = document.getElementById('aud');
-let cur = 0, isPlaying = false, isShuffle = false;
+let cur = 0, 
+isPlaying = false, 
+isShuffle = false, 
+repeatMode = 0; // 0=off, 1=all, 2=one
 const liked = new Set();
 let lyricsOpen = false;
 let lyricsCache = {};
-let rabbitEl = null;
 let parsedLyrics = [];
 let activeIdx    = -1;
 
-/* ══════════════════════════════════════════
-   LANGUAGE DETECTION FOR LYRICS
-   ──────────────────────────────────────────
-   RULES:
-   ✅ English (Latin) letters     — always accepted
-   ✅ Bangla (Bengali) script     — always accepted
-   ❌ Hindi (Devanagari)          — REJECTED (must be romanized/English letters)
-   ❌ Arabic, CJK, Cyrillic, etc. — REJECTED (must be romanized/English letters)
 
-   Reason: The playlist has Bangla songs whose native
-   script is beautiful and readable for the audience.
-   Hindi and other non-Latin/non-Bangla scripts get
-   fetched only in romanized (English letter) form so
-   every user can read along regardless of script.
-══════════════════════════════════════════ */
+
 function isAcceptableLettered(text) {
   if (!text || typeof text !== 'string') return false;
   // Strip LRC timestamps like [01:23.45]
@@ -664,11 +656,13 @@ function loadTrack(idx, autoplay) {
 
   aud.src = t.url;
   aud.load();
+  updateMediaSession(t);
   if (autoplay) { aud.play().catch(() => {}); }
   else { setPlaying(false); }
 
   renderQueue();
   if (lyricsOpen) renderLyricsPanel();
+  updateNotifCard();
 }
 
 /* ── PLAYBACK ── */
@@ -678,18 +672,93 @@ function setPlaying(p) {
     ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
     : '<path d="M8 5v14l11-7z"/>';
   document.getElementById('player-sec').classList.toggle('playing', p);
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = p ? 'playing' : 'paused';
+  }
 }
+
+function nextTrack(forcePlay = isPlaying) { 
+  const nextIdx = isShuffle ? Math.floor(Math.random() * TRACKS.length) : (cur + 1) % TRACKS.length;
+  // If forcePlay is true, the next song will start playing automatically
+  loadTrack(nextIdx, forcePlay); 
+}
+
+function prevTrack(forcePlay = isPlaying) { 
+  if (aud.currentTime > 3) {
+    aud.currentTime = 0;
+  } else {
+    const prevIdx = (cur - 1 + TRACKS.length) % TRACKS.length;
+    loadTrack(prevIdx, forcePlay); 
+  }
+}
+
+function toggleShuffle() { 
+  isShuffle = !isShuffle; 
+  document.getElementById('shuf-btn').classList.toggle('on', isShuffle);
+}
+
 function togglePlay() {
-  if (aud.paused) { aud.play().catch(() => {}); }
-  else { aud.pause(); }
+  if (aud.paused) {
+    aud.play().catch(e => console.log("Playback failed:", e));
+  } else {
+    aud.pause();
+  }
 }
-function nextTrack() { loadTrack(isShuffle ? Math.floor(Math.random() * TRACKS.length) : cur + 1, isPlaying); }
-function prevTrack() { aud.currentTime > 3 ? (aud.currentTime = 0) : loadTrack(cur - 1, isPlaying); }
-function toggleShuffle() { isShuffle = !isShuffle; document.getElementById('shuf-btn').classList.toggle('on', isShuffle); }
+
 function toggleLike() {
   liked.has(cur) ? liked.delete(cur) : liked.add(cur);
   document.getElementById('like-btn').textContent = liked.has(cur) ? '♥' : '♡';
   document.getElementById('like-btn').classList.toggle('on', liked.has(cur));
+}
+
+/* ── MEDIA SESSION API ── */
+function updateMediaSession(t) {
+  if (!('mediaSession' in navigator)) return;
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title:  t.title,
+    artist: `Billi - ${t.artist}`,
+   	album: 'Jinka Player',
+    artwork: [
+      { src: t.thumb, sizes: '512x512', type: 'image/jpeg' },
+      { src: t.thumb, sizes: '256x256', type: 'image/jpeg' },
+    ]
+  });
+
+  navigator.mediaSession.setActionHandler('play', () => {
+    aud.play().catch(() => {});
+  });
+  navigator.mediaSession.setActionHandler('pause', () => {
+    aud.pause();
+  });
+  navigator.mediaSession.setActionHandler('previoustrack', () => {
+    prevTrack();
+  });
+  navigator.mediaSession.setActionHandler('nexttrack', () => {
+    nextTrack();
+  });
+  navigator.mediaSession.setActionHandler('seekto', (details) => {
+    if (details.seekTime !== undefined && aud.duration) {
+      aud.currentTime = details.seekTime;
+    }
+  });
+  navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+    aud.currentTime = Math.max(0, aud.currentTime - (details.seekOffset || 10));
+  });
+  navigator.mediaSession.setActionHandler('seekforward', (details) => {
+    aud.currentTime = Math.min(aud.duration || 0, aud.currentTime + (details.seekOffset || 10));
+  });
+}
+
+function updatePositionState() {
+  if (!('mediaSession' in navigator) || !aud.duration) return;
+  try {
+    navigator.mediaSession.setPositionState({
+      duration:     aud.duration,
+      playbackRate: aud.playbackRate,
+      position:     aud.currentTime,
+    });
+  } catch(e) { /* not supported on all browsers */ }
 }
 
 /* ── AUDIO EVENTS ── */
@@ -699,13 +768,14 @@ aud.addEventListener('timeupdate', () => {
   document.getElementById('dur-t').textContent = fmt(aud.duration);
   updateWave();
   updateSyncedLyrics();
+  updatePositionState();
 });
 aud.addEventListener('loadedmetadata', () => {
   fetchLyrics(cur, aud.duration);
+  updatePositionState();
 });
 aud.addEventListener('play',  () => setPlaying(true));
 aud.addEventListener('pause', () => setPlaying(false));
-aud.addEventListener('ended', () => nextTrack());
 
 /* ── QUEUE ── */
 function renderQueue() {
@@ -1024,6 +1094,85 @@ function closeLyrics() {
 let _ty0 = 0;
 document.getElementById('lyrics-panel').addEventListener('touchstart', e => { _ty0 = e.touches[0].clientY; }, { passive: true });
 document.getElementById('lyrics-panel').addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - _ty0 > 80) closeLyrics(); }, { passive: true });
+
+function updateNotifCard() {
+  const t = TRACKS[cur];
+  
+  // Show native notification if permission was granted
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(`Billi`, {
+      body: `${t.title}\nBilli`, // Changed ${t.artist} to "Billi"
+      icon: t.thumb,
+      tag: 'billi-music',
+      requireInteraction: false,
+      badge: t.thumb
+    });
+  }
+  }
+
+// Initialize audio cache for lazy loading
+const audioCache = {};
+
+/* Lazy load next and previous songs */
+function preloadAdjacentSongs() {
+  const prevIdx = cur > 0 ? cur - 1 : TRACKS.length - 1;
+  const nextIdx = cur < TRACKS.length - 1 ? cur + 1 : 0;
+  
+  // Preload next song
+  if (!audioCache[nextIdx]) {
+    const nextTrack = TRACKS[nextIdx];
+    const audio = new Audio(nextTrack.url);
+    audio.preload = 'metadata';
+    audioCache[nextIdx] = audio;
+  }
+  
+  // Preload previous song
+  if (!audioCache[prevIdx]) {
+    const prevTrack = TRACKS[prevIdx];
+    const audio = new Audio(prevTrack.url);
+    audio.preload = 'metadata';
+    audioCache[prevIdx] = audio;
+  }
+}
+
+/* Auto-play next song when current ends */
+/* ── REPEAT TOGGLE ── */
+function toggleRepeat() {
+  repeatMode = (repeatMode + 1) % 3; // 0=Off, 1=All, 2=One
+  const btn = document.getElementById('repeat-btn');
+  btn.classList.toggle('on', repeatMode > 0);
+  
+  // Visual feedback for Repeat One
+  if (repeatMode === 2) {
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg>';
+  } else {
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>';
+  }
+}
+
+
+/* ── CONSOLIDATED ENDED EVENT ── */
+aud.onended = () => {
+  preloadAdjacentSongs(); 
+  
+  if (repeatMode === 2) {
+    // Repeat one: restart current song
+    aud.currentTime = 0;
+    aud.play().catch(() => {});
+  } else if (repeatMode === 1) {
+    // Repeat all: force the next track to play
+    nextTrack(true); 
+  } else {
+    // Repeat off: play next unless it's the very last song
+    if (isShuffle || cur < TRACKS.length - 1) {
+      nextTrack(true); 
+    } else {
+      setPlaying(false);
+    }
+  }
+};
+
+
 
 /* ── INIT ── */
 loadTrack(0, false);
