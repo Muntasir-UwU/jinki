@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Jinka Player</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -40,7 +41,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 #bg-img.on{opacity:1;}
 
 /* ═══════════════════════════════════
-   FLOWER SHOWER — pure CSS/JS petals
+   LEAF SHOWER — glowing gradient leaves
    ═══════════════════════════════════ */
 #flower-canvas{
   position:fixed;inset:0;z-index:1;
@@ -51,65 +52,90 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   top:-60px;
   opacity:0;
   will-change:transform,opacity;
-  animation:petalFall linear infinite;
-  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+  animation:leafFall linear infinite;
+  filter:blur(4px) drop-shadow(0 4px 12px var(--glow-color, rgba(100,200,255,0.3)));
   pointer-events:none;
   user-select:none;
 }
 
-/* The petal shapes — drawn with CSS */
+/* FLOWERS - Blurry SVG style */
+.flower{
+  position:absolute;
+  top:-60px;
+  opacity:0;
+  will-change:transform,opacity;
+  animation:leafFall linear infinite;
+  filter:blur(1px) drop-shadow(0 3px 8px rgba(0,0,0,0.2));
+  pointer-events:none;
+  user-select:none;
+}
+
+/* Glowing leaf shapes - all rounded, no edges */
 .petal-shape{
   position:relative;
   display:block;
-}
-/* Type 1: simple petal (teardrop) */
-.petal-shape.t1{
-  width:14px;height:20px;
-  background:radial-gradient(ellipse at 50% 30%, var(--pclr), transparent 70%);
-  border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
-  opacity:.7;
-}
-/* Type 2: sakura-like */
-.petal-shape.t2{
-  width:16px;height:18px;
-  background:radial-gradient(ellipse at 40% 40%, var(--pclr), transparent 72%);
-  border-radius:80% 20% 55% 50% / 55% 50% 80% 20%;
-  opacity:.65;
-}
-/* Type 3: round petal */
-.petal-shape.t3{
-  width:12px;height:12px;
-  background:radial-gradient(circle at 40% 35%, var(--pclr), transparent 70%);
+  filter:brightness(1.15);
   border-radius:50%;
-  opacity:.6;
-}
-/* Type 4: thin long petal */
-.petal-shape.t4{
-  width:8px;height:22px;
-  background:radial-gradient(ellipse at 50% 30%, var(--pclr), transparent 68%);
-  border-radius:50% 50% 50% 50% / 70% 70% 30% 30%;
-  opacity:.55;
-}
-/* Type 5: full flower emoji for variety */
-.petal-shape.t5{
-  font-size:16px;
-  line-height:1;
-  opacity:.4;
 }
 
-@keyframes petalFall{
+/* Leaf type 1: Small rounded blob */
+.petal-shape.t1{
+  width:14px;height:18px;
+  background:var(--leaf-gradient);
+  border-radius:50%;
+  opacity:.75;
+  box-shadow:0 0 10px var(--glow-color, rgba(100,200,255,0.4));
+}
+
+/* Leaf type 2: Oval rounded */
+.petal-shape.t2{
+  width:16px;height:22px;
+  background:var(--leaf-gradient);
+  border-radius:50%;
+  opacity:.7;
+  box-shadow:0 0 12px var(--glow-color, rgba(100,200,255,0.5));
+}
+
+/* Leaf type 3: Small round */
+.petal-shape.t3{
+  width:12px;height:14px;
+  background:var(--leaf-gradient);
+  border-radius:50%;
+  opacity:.65;
+  box-shadow:0 0 8px var(--glow-color, rgba(100,200,255,0.4));
+}
+
+/* Leaf type 4: Medium rounded */
+.petal-shape.t4{
+  width:18px;height:24px;
+  background:var(--leaf-gradient);
+  border-radius:50%;
+  opacity:.7;
+  box-shadow:0 0 11px var(--glow-color, rgba(100,200,255,0.45));
+}
+
+/* Leaf type 5: Tiny glow */
+.petal-shape.t5{
+  width:10px;height:12px;
+  background:var(--leaf-gradient);
+  border-radius:50%;
+  opacity:.6;
+  box-shadow:0 0 9px var(--glow-color, rgba(100,200,255,0.3));
+}
+
+@keyframes leafFall{
   0%{
     opacity:0;
     transform:translateY(0) translateX(0) rotate(0deg) scale(0.7);
   }
   8%{
-    opacity:var(--popacity,0.6);
+    opacity:var(--popacity,0.65);
   }
   50%{
     transform:translateY(calc(50vh)) translateX(var(--drift,30px)) rotate(var(--spin,180deg)) scale(1);
   }
   92%{
-    opacity:var(--popacity,0.6);
+    opacity:var(--popacity,0.65);
   }
   100%{
     opacity:0;
@@ -213,11 +239,22 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   background:transparent;border:none;color:var(--txt2);cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:color .18s,background .18s,transform .15s;flex-shrink:0;
+  position:relative;
 }
 .icon-btn svg{width:20px;height:20px;fill:currentColor;}
 .icon-btn:hover{color:var(--txt);background:var(--glass2);}
 .icon-btn.on{color:var(--accent);}
 .icon-btn:active{transform:scale(.9);}
+
+/* Loading indicator for preload status */
+.icon-btn .load-ring{
+  position:absolute;width:18px;height:18px;border:1.5px solid transparent;
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .8s linear infinite;opacity:0;
+  pointer-events:none;transition:opacity .2s;
+}
+.icon-btn.loading .load-ring{opacity:1;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
 .play-btn{
   width:64px;height:64px;border-radius:50%;
@@ -226,6 +263,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   cursor:pointer;flex-shrink:0;
   box-shadow:0 8px 28px rgba(255,255,255,0.2);
   transition:transform .15s,box-shadow .2s;
+  position:relative;
 }
 .play-btn svg{width:24px;height:24px;fill:#080810;}
 .play-btn:hover{transform:scale(1.07);box-shadow:0 12px 36px rgba(255,255,255,0.26);}
@@ -236,22 +274,97 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   background:var(--glass);border:1px solid var(--bdr);
   border-radius:24px;
   overflow:hidden;flex-shrink:0;
+  max-height:140px;
   transition:max-height .4s cubic-bezier(.16,1,.3,1);
+  cursor:pointer;
+  touch-action:none;
+  user-select:none;
 }
+.up-next.expanded{
+  max-height:calc(55vh);
+}
+
+/* TIMER DISPLAY */
+.timer-display{
+  width:100%;text-align:center;margin-bottom:12px;padding:20px 16px;
+  background:linear-gradient(135deg, rgba(232,96,122,0.15) 0%, rgba(100,50,150,0.15) 100%), 
+             url('https://upcdn.io/kW2K8nP/raw/IMG_20260403_085524.jpg') center/cover;
+  border:1px solid rgba(232,96,122,0.4);
+  border-radius:16px;font-size:.75rem;color:var(--accent);
+  letter-spacing:.08em;font-weight:500;position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(232,96,122,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition:all .4s cubic-bezier(.16,1,.3,1);
+}
+.timer-display::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 50%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%);
+  pointer-events:none;z-index:1;
+}
+.timer-display::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);
+  pointer-events:none;z-index:1;
+}
+.timer-display > *{position:relative;z-index:2;}
+.timer-display span:first-child{
+  display:block;font-size:.65rem;text-transform:uppercase;
+  opacity:.85;margin-bottom:8px;letter-spacing:.12em;
+}
+.timer-display.expired{
+  background:linear-gradient(135deg, rgba(76,175,80,0.2) 0%, rgba(100,200,150,0.2) 100%), 
+             url('https://upcdn.io/kW2K8nP/raw/IMG_20260403_085524.jpg') center/cover;
+  border-color:rgba(76,175,80,0.5);
+  color:#4caf50;
+  box-shadow:0 0 24px rgba(76,175,80,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.timer-display.expired::before{
+  background:radial-gradient(circle at 30% 50%, rgba(76,175,80,0.15) 0%, rgba(0,0,0,0.5) 100%);
+}
+.timer-display.expired::after{
+  background:linear-gradient(180deg, rgba(76,175,80,0.15) 0%, rgba(0,0,0,0.5) 100%);
+  animation:pulse-glow 1.5s ease-in-out infinite;
+}
+.timer-text{
+  font-family:monospace;font-weight:700;
+  display:inline-block;margin:0 2px;font-size:1.1em;
+  letter-spacing:.08em;text-shadow:0 2px 8px rgba(0,0,0,0.5);
+  animation:number-pulse .8s ease-in-out infinite;
+}
+@keyframes pulse-glow{
+  0%,100%{box-shadow:0 0 0 0 rgba(76,175,80,0.4);}
+  50%{box-shadow:0 0 0 8px rgba(76,175,80,0);}
+}
+@keyframes number-pulse{
+  0%,100%{opacity:1;transform:scale(1);}
+  50%{opacity:.9;transform:scale(1.02);}
+}
+
+/* ANIMATED CAT */
 .up-next-header{
   display:flex;align-items:center;justify-content:space-between;
-  padding:14px 16px 0;
+  padding:14px 16px;
+  cursor:pointer;
+  user-select:none;
+  touch-action:none;
 }
+
 .sec-label{
   font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
   color:var(--txt2);
+  flex:1;
 }
+
 .up-next-expand{
   width:32px;height:32px;border-radius:50%;
   background:var(--glass2);border:1px solid var(--bdr);
   color:var(--txt2);cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:background .18s,color .18s,transform .3s;flex-shrink:0;
+  border:none;
+  padding:0;
+  pointer-events:auto;
+  position:relative;
+  z-index:10;
 }
 .up-next-expand svg{width:15px;height:15px;fill:currentColor;transition:transform .3s;}
 .up-next-expand:hover{background:rgba(255,255,255,0.1);color:var(--txt);}
@@ -259,7 +372,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 .track-list{
   padding:8px 10px 10px;
-  max-height:132px; /* shows ~2 rows comfortably */
+  max-height:calc(55vh - 60px);
   overflow-y:auto;
   scrollbar-width:thin;
   scrollbar-color:var(--bdr) transparent;
@@ -267,15 +380,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 }
 .track-list::-webkit-scrollbar{width:3px;}
 .track-list::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:99px;}
-.up-next.expanded .track-list{
-  max-height:calc(55vh); /* expands to show all */
-}
 
 .track-row{
   display:flex;align-items:center;gap:13px;
   padding:10px 8px;border-radius:14px;cursor:pointer;
   transition:background .18s;
-  min-height:64px; /* proper touch target */
+  min-height:64px;
   position:relative;
 }
 .track-row:active{transform:scale(.98);}
@@ -291,6 +401,22 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   font-variant-numeric:tabular-nums;
 }
 .track-row.act .track-num{display:none;}
+
+/* Preload status indicator */
+.track-preload{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;border-radius:50%;
+  background:transparent;border:1.5px solid var(--txt3);
+  opacity:0;transition:opacity .2s;
+  font-size:.55rem;display:flex;align-items:center;justify-content:center;
+  color:var(--txt3);
+}
+.track-row.preloading .track-preload{opacity:1;}
+.track-row.preloading .track-preload::before{
+  content:'⟳';animation:spin .8s linear infinite;
+}
+.track-row.preloaded .track-preload{opacity:0.6;border-color:var(--accent);color:var(--accent);}
+.track-row.preloaded .track-preload::before{content:'✓';}
 
 .track-thumb{
   width:52px;height:52px;border-radius:12px;
@@ -471,9 +597,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       <div class="ctrl-left">
         <button class="icon-btn" id="shuf-btn" onclick="toggleShuffle()" title="Shuffle">
           <svg viewBox="0 0 24 24"><path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zm4.76-.29.89.9L19 7v1.5l2-2.5L19 3.5V5l-2.65 2.88zM4 18.59 5.41 20l14.8-14.8-1.41-1.4L4 18.59zm10.71.71L19 17v1.5l-2-2.5 2-2.5V15l-3.35 2.88-1.41-1.42 1.47-1.17-1.41-1.41L11.5 15.5l3.21 3.8z"/></svg>
+          <div class="load-ring"></div>
         </button>
         <button class="icon-btn" id="repeat-btn" onclick="toggleRepeat()" title="Repeat">
           <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+          <div class="load-ring"></div>
         </button>
       </div>
       <div class="ctrl-center">
@@ -495,10 +623,17 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     </div>
   </div>
 
+  <!-- TIMER DISPLAY -->
+  <div class="timer-display" id="timer-display">
+    <span>⏱ Countdown to April 6</span>
+    <span class="timer-text" id="timer-countdown">--d --:--:--</span>
+  </div>
+
+  <!-- UP NEXT - IMPROVED INTERACTIVE -->
   <div class="up-next" id="up-next">
     <div class="up-next-header">
-      <div class="sec-label">Up Next</div>
-      <button class="up-next-expand" id="up-next-btn" onclick="toggleUpNext()" title="Expand queue">
+      <div class="sec-label" onclick="toggleUpNext()" style="cursor:pointer;flex:1;pointer-events:auto;">Up Next</div>
+      <button class="up-next-expand" id="up-next-btn" onclick="event.stopPropagation();toggleUpNext();" style="cursor:pointer;border:none;background:none;padding:8px;display:flex;align-items:center;justify-content:center;z-index:100;position:relative;flex-shrink:0;pointer-events:all;">
         <svg viewBox="0 0 24 24"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
       </button>
     </div>
@@ -511,55 +646,150 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <script>
 /* ═══════════════════════════════════════════
    FLOWER SHOWER ENGINE
-   Pure JS — spawns CSS petal elements that
-   drift and spin downward. Lives on z-index 1
-   (behind the player on z-index 2).
-   No impact on music player interaction.
 ═══════════════════════════════════════════ */    
-(function flowerShower(){
+(function leafShower(){
   const canvas = document.getElementById('flower-canvas');
-  const MAX_PETALS = 35;       // on screen at once
-  const SPAWN_INTERVAL = 600;  // ms between spawns
+  const MAX_LEAVES = 12;
+  const MAX_FLOWERS = 5;
+  const SPAWN_INTERVAL = 800;
+  const FLOWER_SPAWN_INTERVAL = 2500;
 
-  // Color palettes for petals
-  const PALETTES = [
-    ['#ffb7c5','#ff91a4','#ff6f91','#ffc4d6','#e8607a'],  // pink / sakura
-    ['#c9a0dc','#d8b4fe','#e2bfff','#b388ff','#9c7cbe'],  // lavender
-    ['#ffe0b2','#ffcc80','#ffb347','#ffd699','#fff3e0'],  // warm gold
-    ['#f8bbd0','#f48fb1','#ec407a','#f06292','#fce4ec'],  // rose
-    ['#b2ebf2','#80deea','#4dd0e1','#a5d6a7','#c8e6c9'],  // spring cool
+  // Random color gradients - pink, yellow, green, blue
+  const COLOR_GRADIENTS = [
+    'linear-gradient(135deg, #ff69b4 0%, #ff1493 100%)',      // Hot pink
+    'linear-gradient(135deg, #ffb347 0%, #ffa500 100%)',      // Yellow/Orange
+    'linear-gradient(135deg, #00ff88 0%, #00dd66 100%)',      // Green
+    'linear-gradient(135deg, #87ceeb 0%, #4169e1 100%)',      // Sky blue
+    'linear-gradient(135deg, #ff69b4 0%, #ffb347 100%)',      // Pink to yellow
+    'linear-gradient(135deg, #00ff88 0%, #87ceeb 100%)',      // Green to blue
+    'linear-gradient(135deg, #ffa500 0%, #ff1493 100%)',      // Orange to pink
+    'linear-gradient(135deg, #4169e1 0%, #00ff88 100%)',      // Blue to green
+    'linear-gradient(135deg, #ff69b4 0%, #87ceeb 100%)',      // Pink to blue
+    'linear-gradient(135deg, #ffb347 0%, #00ff88 100%)',      // Yellow to green
   ];
 
-  let palette = PALETTES[0];
-  let petalCount = 0;
+  const GLOW_COLORS = [
+    'rgba(255, 105, 180, 0.5)',     // Pink glow
+    'rgba(255, 165, 0, 0.5)',       // Yellow glow
+    'rgba(0, 255, 136, 0.5)',       // Green glow
+    'rgba(65, 105, 225, 0.5)',      // Blue glow
+  ];
 
-  // Rotate palette every 20 seconds
-  setInterval(()=>{
-    palette = PALETTES[Math.floor(Math.random()*PALETTES.length)];
-  },20000);
+  const FLOWER_COLORS = [
+    '#ff69b4', // Hot pink
+    '#ff1493', // Deep pink
+    '#ffb347', // Yellow
+    '#ffa500', // Orange
+    '#ff69b4', // Pink
+    '#ff6b9d', // Light pink
+    '#ffc0cb', // Pale pink
+    '#ffe5b4', // Peach
+  ];
+
+  let leafCount = 0;
+  let flowerCount = 0;
 
   const TYPES = ['t1','t2','t3','t4','t5'];
-  const EMOJIS = ['🌸','🏵️','💮','✿','❀','🌺','🌷'];
 
   function randomBetween(a,b){ return a + Math.random()*(b-a); }
 
-  function spawnPetal(){
-    if(petalCount >= MAX_PETALS) return;
+  // Create SVG flower
+  function createSVGFlower(color) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 100 100');
+    svg.setAttribute('width', '32');
+    svg.setAttribute('height', '32');
+    
+    // Create 5 petals
+    for(let i = 0; i < 5; i++) {
+      const angle = (i * 72) * (Math.PI / 180);
+      const x = 50 + 30 * Math.cos(angle);
+      const y = 50 + 30 * Math.sin(angle);
+      
+      const petal = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+      petal.setAttribute('cx', x);
+      petal.setAttribute('cy', y);
+      petal.setAttribute('rx', '16');
+      petal.setAttribute('ry', '20');
+      petal.setAttribute('fill', color);
+      petal.setAttribute('opacity', '0.85');
+      petal.setAttribute('transform', `rotate(${i * 72} 50 50)`);
+      svg.appendChild(petal);
+    }
+    
+    // Center circle
+    const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    center.setAttribute('cx', '50');
+    center.setAttribute('cy', '50');
+    center.setAttribute('r', '12');
+    center.setAttribute('fill', '#ffdd00');
+    center.setAttribute('opacity', '0.9');
+    svg.appendChild(center);
+    
+    return svg;
+  }
+
+  function spawnLeaf(){
+    if(leafCount >= MAX_LEAVES) return;
 
     const el = document.createElement('div');
     el.className = 'petal';
 
     const type = TYPES[Math.floor(Math.random()*TYPES.length)];
-    const color = palette[Math.floor(Math.random()*palette.length)];
-    const size = randomBetween(0.7, 1.6);
-    const duration = randomBetween(8, 18);
+    const gradient = COLOR_GRADIENTS[Math.floor(Math.random()*COLOR_GRADIENTS.length)];
+    const glowColor = GLOW_COLORS[Math.floor(Math.random()*GLOW_COLORS.length)];
+    const size = randomBetween(0.5, 1.0);
+    const duration = randomBetween(10, 22);
+    const delay = randomBetween(0, 2);
+    const left = randomBetween(-5, 105);
+    const drift1 = randomBetween(-60, 60);
+    const drift2 = randomBetween(-40, 40);
+    const spin1 = randomBetween(90, 450) * (Math.random()>0.5?1:-1);
+    const spin2 = randomBetween(180, 720) * (Math.random()>0.5?1:-1);
+    const opacity = randomBetween(0.4, 0.7);
+
+    el.style.left = left + '%';
+    el.style.setProperty('--drift',  drift1 + 'px');
+    el.style.setProperty('--drift2', drift2 + 'px');
+    el.style.setProperty('--spin',   spin1 + 'deg');
+    el.style.setProperty('--spin2',  spin2 + 'deg');
+    el.style.setProperty('--popacity', opacity);
+    el.style.setProperty('--glow-color', glowColor);
+    el.style.animationDuration = duration + 's';
+    el.style.animationDelay = delay + 's';
+
+    const shape = document.createElement('span');
+    shape.className = 'petal-shape ' + type;
+    shape.style.setProperty('--leaf-gradient', gradient);
+    shape.style.transform = 'scale(' + size + ')';
+
+    el.appendChild(shape);
+    canvas.appendChild(el);
+    leafCount++;
+
+    const totalTime = (duration + delay) * 1000 + 200;
+    setTimeout(()=>{
+      el.remove();
+      leafCount--;
+    }, totalTime);
+  }
+
+  function spawnFlower(){
+    if(flowerCount >= MAX_FLOWERS) return;
+
+    const el = document.createElement('div');
+    el.className = 'flower';
+
+    const color = FLOWER_COLORS[Math.floor(Math.random()*FLOWER_COLORS.length)];
+    const size = randomBetween(0.7, 1.3);
+    const duration = randomBetween(12, 24);
     const delay = randomBetween(0, 2);
     const left = randomBetween(-5, 105);
     const drift1 = randomBetween(-80, 80);
     const drift2 = randomBetween(-60, 60);
-    const spin1 = randomBetween(90, 540) * (Math.random()>0.5?1:-1);
+    const spin1 = randomBetween(120, 480) * (Math.random()>0.5?1:-1);
     const spin2 = randomBetween(180, 720) * (Math.random()>0.5?1:-1);
-    const opacity = randomBetween(0.3, 0.7);
+    const opacity = randomBetween(0.5, 0.75);
 
     el.style.left = left + '%';
     el.style.setProperty('--drift',  drift1 + 'px');
@@ -569,44 +799,140 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     el.style.setProperty('--popacity', opacity);
     el.style.animationDuration = duration + 's';
     el.style.animationDelay = delay + 's';
+    el.style.transform = `scale(${size})`;
 
-    const shape = document.createElement('span');
-    shape.className = 'petal-shape ' + type;
-    shape.style.setProperty('--pclr', color);
-    shape.style.transform = 'scale(' + size + ')';
-
-    if(type === 't5'){
-      shape.textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
-      shape.style.fontSize = (size * 14) + 'px';
-    }
-
-    el.appendChild(shape);
+    const svg = createSVGFlower(color);
+    el.appendChild(svg);
     canvas.appendChild(el);
-    petalCount++;
+    flowerCount++;
 
-    // Remove after animation
     const totalTime = (duration + delay) * 1000 + 200;
     setTimeout(()=>{
       el.remove();
-      petalCount--;
+      flowerCount--;
     }, totalTime);
   }
 
-  // Stagger initial burst
-  for(let i=0;i<12;i++){
-    setTimeout(spawnPetal, i*150);
+  // Initial spawn
+  for(let i=0;i<6;i++){
+    setTimeout(spawnLeaf, i*200);
   }
+  setTimeout(spawnFlower, 500);
 
   // Continuous spawn
-  setInterval(spawnPetal, SPAWN_INTERVAL);
+  setInterval(spawnLeaf, SPAWN_INTERVAL);
+  setInterval(spawnFlower, FLOWER_SPAWN_INTERVAL);
 })();
 
+
+/* ── PROFESSIONAL AUDIO CACHE & PRELOADING ── */
+const audioCache = {};
+const PRELOAD_STATES = {
+  IDLE: 'idle',
+  PRELOADING: 'preloading',
+  LOADED: 'loaded',
+  PLAYING: 'playing',
+  ERROR: 'error'
+};
+let preloadStates = {};
+
+/**
+ * Smart preload system
+ * - Pre-loads next and previous songs in background
+ * - Maintains up to 3 audio instances for smooth transitions
+ * - Auto-manages memory by disposing old cached audio
+ */
+function setupAudioCache(trackIdx) {
+  if (preloadStates[trackIdx] === undefined) {
+    preloadStates[trackIdx] = PRELOAD_STATES.IDLE;
+  }
+
+  const prevIdx = (trackIdx - 1 + TRACKS.length) % TRACKS.length;
+  const nextIdx = (trackIdx + 1) % TRACKS.length;
+
+  // Preload next song
+  preloadSongInBackground(nextIdx);
+  
+  // Preload previous song
+  preloadSongInBackground(prevIdx);
+}
+
+function preloadSongInBackground(trackIdx) {
+  // Skip if already cached or currently preloading
+  if (audioCache[trackIdx] || preloadStates[trackIdx] === PRELOAD_STATES.PRELOADING) {
+    return;
+  }
+
+  preloadStates[trackIdx] = PRELOAD_STATES.PRELOADING;
+  updateQueueUI();
+
+  const track = TRACKS[trackIdx];
+  const audio = new Audio();
+  audio.crossOrigin = 'anonymous';
+  audio.preload = 'auto';
+
+  // Success handler
+  audio.addEventListener('canplay', () => {
+    preloadStates[trackIdx] = PRELOAD_STATES.LOADED;
+    audioCache[trackIdx] = audio;
+    updateQueueUI();
+  }, { once: true });
+
+  // Error handler
+  audio.addEventListener('error', () => {
+    preloadStates[trackIdx] = PRELOAD_STATES.ERROR;
+    updateQueueUI();
+  }, { once: true });
+
+  // Start loading
+  audio.src = track.url;
+  audio.load();
+}
+
+function getOrCreateAudio(trackIdx) {
+  if (audioCache[trackIdx]) {
+    return audioCache[trackIdx];
+  }
+  const track = TRACKS[trackIdx];
+  const audio = new Audio();
+  audio.crossOrigin = 'anonymous';
+  audio.preload = 'auto';
+  audio.src = track.url;
+  return audio;
+}
+
+function clearOldCache(keepIndices) {
+  Object.keys(audioCache).forEach(idx => {
+    if (!keepIndices.includes(parseInt(idx))) {
+      try {
+        audioCache[idx].pause();
+        audioCache[idx].src = '';
+      } catch (e) {}
+      delete audioCache[idx];
+    }
+  });
+}
+
+function updateQueueUI() {
+  const rows = document.querySelectorAll('.track-row');
+  rows.forEach((row, idx) => {
+    const state = preloadStates[idx];
+    if (state === PRELOAD_STATES.PRELOADING) {
+      row.classList.add('preloading');
+      row.classList.remove('preloaded');
+    } else if (state === PRELOAD_STATES.LOADED) {
+      row.classList.add('preloaded');
+      row.classList.remove('preloading');
+    } else {
+      row.classList.remove('preloading', 'preloaded');
+    }
+  });
+}
 
 /* ── TRACKS ── */
 let TRACKS = []; 
 
 async function initApp() {
-  // Use the RAW version of your GitHub link to get clean JSON data
   const GITHUB_JSON_URL = './api.json';
 
   try {
@@ -615,9 +941,9 @@ async function initApp() {
     
     TRACKS = await response.json();
     
-    // Initialize the player once data is loaded
     loadTrack(0, false);
     renderQueue();
+    setupAudioCache(0);
   } catch (error) {
     console.error("Failed to fetch tracks:", error);
     document.getElementById('song-title').textContent = "Error loading playlist";
@@ -630,7 +956,7 @@ const aud = document.getElementById('aud');
 let cur = 0, 
 isPlaying = false, 
 isShuffle = false, 
-repeatMode = 0; // 0=off, 1=all, 2=one
+repeatMode = 0;
 const liked = new Set();
 let lyricsOpen = false;
 let lyricsCache = {};
@@ -638,41 +964,33 @@ let parsedLyrics = [];
 let activeIdx    = -1;
 
 
-
 function isAcceptableLettered(text) {
   if (!text || typeof text !== 'string') return false;
-  // Strip LRC timestamps like [01:23.45]
-  const cleaned = text.replace(/\[\d{2}:\d{2}([.:]\d{1,3})?\]/g, '').trim();
-  if (!cleaned) return true; // empty lines are fine
+  const cleaned = text.replace(/\[\d{2}:\d{2}([.:]\\d{1,3})?\]/g, '').trim();
+  if (!cleaned) return true;
 
-  // Count ACCEPTED script chars: Latin + Bangla
   const latinChars  = (cleaned.match(/[a-zA-Z\u00C0-\u024F]/g) || []).length;
   const banglaChars = (cleaned.match(/[\u0980-\u09FF]/g) || []).length;
   const acceptedChars = latinChars + banglaChars;
 
-  // Count REJECTED script chars (Devanagari, Arabic, CJK, Cyrillic, Gurmukhi, Tamil, Telugu, etc.)
   const rejectedChars = (cleaned.match(/[\u0900-\u097F\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0600-\u06FF\u0750-\u077F\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF\u0400-\u04FF\u0500-\u052F\u0E00-\u0E7F\u1000-\u109F]/g) || []).length;
 
-  // If any REJECTED script characters exist → not acceptable
   if (rejectedChars > 0) return false;
 
-  // Must have at least some accepted script characters
   const totalAlpha = acceptedChars + rejectedChars;
-  if (totalAlpha === 0) return true; // punctuation/numbers only — fine
+  if (totalAlpha === 0) return true;
 
   return acceptedChars / totalAlpha > 0.7;
 }
 
-/* Check entire lyrics block — majority of lines must pass */
 function isLyricsAcceptable(lyricsText) {
   if (!lyricsText) return false;
   const lines = lyricsText.split('\n').filter(l => {
-    const cleaned = l.replace(/\[\d{2}:\d{2}([.:]\d{1,3})?\]/g, '').trim();
+    const cleaned = l.replace(/\[\d{2}:\d{2}([.:]\\d{1,3})?\]/g, '').trim();
     return cleaned.length > 0;
   });
   if (lines.length === 0) return true;
   const goodLines = lines.filter(l => isAcceptableLettered(l)).length;
-  // At least 80% of non-empty lines must be acceptable
   return (goodLines / lines.length) >= 0.8;
 }
 
@@ -740,6 +1058,10 @@ function loadTrack(idx, autoplay) {
   renderQueue();
   if (lyricsOpen) renderLyricsPanel();
   updateNotifCard();
+
+  // Setup cache for adjacent songs
+  setupAudioCache(cur);
+  clearOldCache([cur, (cur - 1 + TRACKS.length) % TRACKS.length, (cur + 1) % TRACKS.length]);
 }
 
 /* ── PLAYBACK ── */
@@ -756,7 +1078,6 @@ function setPlaying(p) {
 
 function nextTrack(forcePlay = isPlaying) { 
   const nextIdx = isShuffle ? Math.floor(Math.random() * TRACKS.length) : (cur + 1) % TRACKS.length;
-  // If forcePlay is true, the next song will start playing automatically
   loadTrack(nextIdx, forcePlay); 
 }
 
@@ -795,7 +1116,7 @@ function updateMediaSession(t) {
   navigator.mediaSession.metadata = new MediaMetadata({
     title:  t.title,
     artist: `Billi - ${t.artist}`,
-   	album: 'Jinka Player',
+    album: 'Jinka Player',
     artwork: [
       { src: t.thumb, sizes: '512x512', type: 'image/jpeg' },
       { src: t.thumb, sizes: '256x256', type: 'image/jpeg' },
@@ -835,7 +1156,7 @@ function updatePositionState() {
       playbackRate: aud.playbackRate,
       position:     aud.currentTime,
     });
-  } catch(e) { /* not supported on all browsers */ }
+  } catch(e) { }
 }
 
 /* ── AUDIO EVENTS ── */
@@ -867,16 +1188,19 @@ function renderQueue() {
       <div class="track-wave">
         <div class="tw"></div><div class="tw"></div><div class="tw"></div><div class="tw"></div>
       </div>
+      <div class="track-preload"></div>
     </div>`).join('');
 
-  // Scroll active track into view
+  updateQueueUI();
+
   const activeRow = document.querySelector('.track-row.act');
   if (activeRow) setTimeout(() => activeRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 120);
 }
 
-/* ── UP NEXT EXPAND TOGGLE ── */
+/* ── UP NEXT EXPAND TOGGLE - IMPROVED ── */
 function toggleUpNext() {
-  document.getElementById('up-next').classList.toggle('expanded');
+  const upNext = document.getElementById('up-next');
+  upNext.classList.toggle('expanded');
 }
 
 /* ════════════════════════════════════════
@@ -939,21 +1263,10 @@ function updateSyncedLyrics() {
 
 /* ════════════════════════════════════════
    LYRICS FETCHER — lrclib.net
-   ──────────────────────────────────────
-   ★ Accepts: English (Latin) + Bangla (Bengali) script lyrics
-   ★ Rejects: Hindi (Devanagari), Arabic, CJK, Cyrillic, etc.
-     → For those languages, only romanized (English letter) versions accepted
-
-   REASON: The playlist serves a Bengali + English speaking audience.
-   Bangla songs should show their beautiful native বাংলা script.
-   Hindi songs like "HUSN", "Har Funn Maula" etc. are better served
-   in romanized form so everyone can sing along without needing
-   to read Devanagari. This keeps the experience consistent and
-   accessible — you either read English or Bangla, nothing else.
 ════════════════════════════════════════ */
 async function fetchLyrics(trackIdx, audioDuration) {
   if (lyricsCache[trackIdx] !== undefined) return;
-  lyricsCache[trackIdx] = null; // mark as loading
+  lyricsCache[trackIdx] = null;
 
   const t = TRACKS[trackIdx];
 
@@ -965,31 +1278,21 @@ async function fetchLyrics(trackIdx, audioDuration) {
 
   const DURATION_TOLERANCE = 15;
 
-  /*
-   * Score a single result — lower is better.
-   * Returns null if lyrics are NOT in an acceptable script.
-   */
   function scoreResult(r, dur) {
     const hasSynced = r.syncedLyrics && isLyricsAcceptable(r.syncedLyrics);
     const hasPlain  = r.plainLyrics  && isLyricsAcceptable(r.plainLyrics);
 
-    if (!hasSynced && !hasPlain) return null; // unacceptable script — skip
+    if (!hasSynced && !hasPlain) return null;
 
     let score = 0;
-    // Duration closeness
     if (dur && r.duration) {
       score += Math.abs(r.duration - dur);
     }
-    // Prefer synced over plain
     if (hasSynced) score -= 5;
 
     return { result: r, score, hasSynced, hasPlain };
   }
 
-  /*
-   * From an array of lrclib results, pick the best
-   * acceptable (English/Bangla) one closest to audio duration.
-   */
   function pickBestAcceptable(results, dur) {
     if (!Array.isArray(results) || !results.length) return null;
 
@@ -1006,7 +1309,6 @@ async function fetchLyrics(trackIdx, audioDuration) {
   try {
     let bestPick = null;
 
-    // ── ATTEMPT 1: Direct /api/get ──
     try {
       const qGet = new URLSearchParams({ track_name: t.title, artist_name: t.artist });
       if (t.album)       qGet.append('album_name', t.album);
@@ -1023,9 +1325,8 @@ async function fetchLyrics(trackIdx, audioDuration) {
           if (s) bestPick = s;
         }
       }
-    } catch(e) { /* /api/get failed — try search */ }
+    } catch(e) { }
 
-    // ── ATTEMPT 2: Search ──
     try {
       const qSearch = new URLSearchParams({ q: `${t.title} ${t.artist}` });
       const results = await tryGet(`https://lrclib.net/api/search?${qSearch}`);
@@ -1039,9 +1340,8 @@ async function fetchLyrics(trackIdx, audioDuration) {
           }
         }
       }
-    } catch(e) { /* search failed */ }
+    } catch(e) { }
 
-    // ── ATTEMPT 3: Broader search with just the title ──
     if (!bestPick) {
       try {
         const qBroad = new URLSearchParams({ q: t.title });
@@ -1051,10 +1351,9 @@ async function fetchLyrics(trackIdx, audioDuration) {
           const broadPick = pickBestAcceptable(results2, audioDuration);
           if (broadPick) bestPick = broadPick;
         }
-      } catch(e) { /* broad search failed */ }
+      } catch(e) { }
     }
 
-    // ── ATTEMPT 4: Search with "romanized" keyword ──
     if (!bestPick) {
       try {
         const qRoman = new URLSearchParams({ q: `${t.title} romanized` });
@@ -1064,10 +1363,9 @@ async function fetchLyrics(trackIdx, audioDuration) {
           const romanPick = pickBestAcceptable(results3, audioDuration);
           if (romanPick) bestPick = romanPick;
         }
-      } catch(e) { /* romanized search failed */ }
+      } catch(e) { }
     }
 
-    // ── Build final cache entry ──
     if (bestPick) {
       if (bestPick.hasSynced) {
         lyricsCache[trackIdx] = { type: 'lrc', content: bestPick.result.syncedLyrics };
@@ -1093,7 +1391,6 @@ function renderLyricsPanel() {
 
   parsedLyrics = [];
   activeIdx    = -1;
-  rabbitEl     = null;
   body.innerHTML = '';
 
   const cached = lyricsCache[cur];
@@ -1154,7 +1451,7 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-/* ── OPEN / CLOSE ── */
+/* ── OPEN / CLOSE LYRICS ── */
 function openLyrics() {
   lyricsOpen = true;
   document.getElementById('lyrics-panel').classList.add('open');
@@ -1177,7 +1474,6 @@ function closeLyrics() {
   document.getElementById('lyr-btn').classList.remove('on');
 }
 
-/* Swipe down to close */
 let _ty0 = 0;
 document.getElementById('lyrics-panel').addEventListener('touchstart', e => { _ty0 = e.touches[0].clientY; }, { passive: true });
 document.getElementById('lyrics-panel').addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - _ty0 > 80) closeLyrics(); }, { passive: true });
@@ -1185,72 +1481,40 @@ document.getElementById('lyrics-panel').addEventListener('touchend',   e => { if
 function updateNotifCard() {
   const t = TRACKS[cur];
   
-  // Show native notification if permission was granted
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification(`Billi`, {
-      body: `${t.title}\nBilli`, // Changed ${t.artist} to "Billi"
+      body: `${t.title}\nBilli`,
       icon: t.thumb,
       tag: 'billi-music',
       requireInteraction: false,
       badge: t.thumb
     });
   }
-  }
-
-// Initialize audio cache for lazy loading
-const audioCache = {};
-
-/* Lazy load next and previous songs */
-function preloadAdjacentSongs() {
-  const prevIdx = cur > 0 ? cur - 1 : TRACKS.length - 1;
-  const nextIdx = cur < TRACKS.length - 1 ? cur + 1 : 0;
-  
-  // Preload next song
-  if (!audioCache[nextIdx]) {
-    const nextTrack = TRACKS[nextIdx];
-    const audio = new Audio(nextTrack.url);
-    audio.preload = 'metadata';
-    audioCache[nextIdx] = audio;
-  }
-  
-  // Preload previous song
-  if (!audioCache[prevIdx]) {
-    const prevTrack = TRACKS[prevIdx];
-    const audio = new Audio(prevTrack.url);
-    audio.preload = 'metadata';
-    audioCache[prevIdx] = audio;
-  }
 }
 
-/* Auto-play next song when current ends */
 /* ── REPEAT TOGGLE ── */
 function toggleRepeat() {
-  repeatMode = (repeatMode + 1) % 3; // 0=Off, 1=All, 2=One
+  repeatMode = (repeatMode + 1) % 3;
   const btn = document.getElementById('repeat-btn');
   btn.classList.toggle('on', repeatMode > 0);
   
-  // Visual feedback for Repeat One
   if (repeatMode === 2) {
-    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg>';
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg><div class="load-ring"></div>';
   } else {
-    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>';
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg><div class="load-ring"></div>';
   }
 }
 
-
 /* ── CONSOLIDATED ENDED EVENT ── */
 aud.onended = () => {
-  preloadAdjacentSongs(); 
+  setupAudioCache(cur);
   
   if (repeatMode === 2) {
-    // Repeat one: restart current song
     aud.currentTime = 0;
     aud.play().catch(() => {});
   } else if (repeatMode === 1) {
-    // Repeat all: force the next track to play
     nextTrack(true); 
   } else {
-    // Repeat off: play next unless it's the very last song
     if (isShuffle || cur < TRACKS.length - 1) {
       nextTrack(true); 
     } else {
@@ -1259,10 +1523,55 @@ aud.onended = () => {
   }
 };
 
-
-
 /* ── INIT ── */
 initApp();
+
+/* ═══════════════════════════════════════════
+   COUNTDOWN TIMER TO OCTOBER 6
+═══════════════════════════════════════════ */
+function updateCountdownTimer() {
+  const timerDisplay = document.getElementById('timer-display');
+  const timerCountdown = document.getElementById('timer-countdown');
+  
+  const targetDate = new Date(2026, 3, 6, 0, 0, 0).getTime(); // April 6, 2027 00:00:00
+  const now = new Date().getTime();
+  const difference = targetDate - now;
+  
+  if (difference <= 0) {
+    // April 6 has arrived or passed!
+    timerDisplay.classList.add('expired');
+    timerCountdown.innerHTML = '<span style="font-size:1.2em;margin-right:6px;">✨</span>IT\'S APRIL 6!<span style="font-size:1.2em;margin-left:6px;">✨</span>';
+    
+    // Do something special
+    document.body.style.setProperty('--accent', '#4caf50');
+    
+    // Optional: trigger special effects or notifications
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('April 6 is here!', {
+        body: 'Something special is happening! 🎉',
+        icon: '🎉'
+      });
+    }
+  } else {
+    // Calculate remaining time
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((difference / 1000 / 60) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+    
+    // Format with leading zeros
+    const pad = (n) => String(n).padStart(2, '0');
+    timerCountdown.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    
+    timerDisplay.classList.remove('expired');
+  }
+}
+
+// Update timer immediately and then every second
+updateCountdownTimer();
+setInterval(updateCountdownTimer, 1000);
+
 </script>
 </body>
 </html>
+
