@@ -1,234 +1,32 @@
 [
-  {
-    "title": "3 Strikes",
-    "artist": "Terror Jr",
-    "album": "Bop City",
-    "color": "#ff4d00",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/3strikes.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/3Strikes.opus"
-  },
-  {
-    "title": "Aasa Kooda",
-    "artist": "Sai Abhyankkar",
-    "album": "Single",
-    "color": "#ffcc00",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/asakooda.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/AasaKooda.opus"
-  },
-  {
-    "title": "Bargad",
-    "artist": "Talwiinder",
-    "album": "Single",
-    "color": "#4a4a4a",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/bargad.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Bargad.mp3"
-  },
-  {
-    "title": "Batashe Kan Pete",
-    "artist": "Lopamudra Mitra",
-    "album": "Single",
-    "color": "#336699",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-15-08_3463%5B1%5D.png",
-    "url": "https://upcdn.io/kW2K8nP/raw/BatasheKan.opus"
-  },
-  {
-    "title": "Beni Khuley",
-    "artist": "Habib Wahid",
-    "album": "Single",
-    "color": "#e91e63",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/benikhuley.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/BeniKhuley.opus"
-  },
-  {
-    "title": "Blue Eyes",
-    "artist": "Yo Yo Honey Singh",
-    "album": "Single",
-    "color": "#0000ff",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/blueyes.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/BlueEyes.mp3"
-  },
-  {
-    "title": "DJ Waley Babu",
-    "artist": "Badshah",
-    "album": "Single",
-    "color": "#000000",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-14-45_8505%5B1%5D.png",
-    "url": "https://upcdn.io/kW2K8nP/raw/DJWaleyBabu.opus"
-  },
-  {
-    "title": "Dancin",
-    "artist": "Aaron Smith",
-    "album": "Dancin Remix",
-    "color": "#9c27b0",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/Dancin.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Aaron%20Smith%20-%20Dancin%20(KRONO%20Remix)%20-%20Lyrics.mp3"
-  },
-  {
-    "title": "Die For You",
-    "artist": "The Weeknd",
-    "album": "Starboy",
-    "color": "#8844cc",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/dieforyou.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/DieForYou.opus"
-  },
-  {
-    "title": "Double Take",
-    "artist": "dhruv",
-    "album": "raindrops",
-    "color": "#90caf9",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/doubletake.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Doubletake.opus"
-  },
-  {
-    "title": "Ek Akash Tara",
-    "artist": "Lucky Akhand",
-    "album": "Single",
-    "color": "#37474f",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/ekakashtarah.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/EkAkashTara.opus"
-  },
-  {
-    "title": "HUSN",
-    "artist": "Anuv Jain",
-    "album": "Single",
-    "color": "#8d6e63",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/husn.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Husn%20(PenduJatt.Com.Se).mp3"
-  },
-  {
-    "title": "Har Funn Maula",
-    "artist": "Vishal-Shekhar",
-    "album": "Koi Jaane Na",
-    "color": "#ffc107",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/harfunmaula.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/HarFunnMaula.opus"
-  },
-  {
-    "title": "Deja Vu",
-    "artist": "Post Malone",
-    "album": "Stoney",
-    "color": "#795548",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/hotelroom.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Hotelroom.opus"
-  },
-  {
-    "title": "Into It",
-    "artist": "Chase Atlantic",
-    "album": "Chase Atlantic",
-    "color": "#000000",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/intoit.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/IntoIt.opus"
-  },
-  {
-    "title": "Iss Tarah",
-    "artist": "Arijit Singh",
-    "album": "Single",
-    "color": "#b71c1c",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/isstarah.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/IssTarah.mp3"
-  },
-  {
-    "title": "Kinni",
-    "artist": "Diljit Dosanjh",
-    "album": "Ghost",
-    "color": "#4caf50",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/kinni.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Kinni.opus"
-  },
-  {
-    "title": "All Types LilaBali",
-    "artist": "Sliime",
-    "album": "All Types LilaBali",
-    "color": "#d32f2f",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/Alltypes.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/LILABALI.opus"
-  },
-  {
-    "title": "Moromor Buli Kom",
-    "artist": "Papon",
-    "album": "Single",
-    "color": "#2e7d32",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/mormor.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/MoromorBuliKom.opus"
-  },
-  {
-    "title": "Often",
-    "artist": "The Weeknd",
-    "album": "Beauty Behind the Madness",
-    "color": "#121212",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/often.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Often.opus"
-  },
-  {
-    "title": "Prostab",
-    "artist": "Kazi Shuvo",
-    "album": "Single",
-    "color": "#607d8b",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/prostab.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Prostab.opus"
-  },
-  {
-    "title": "Surround Sound",
-    "artist": "JID",
-    "album": "The Forever Story",
-    "color": "#ffeb3b",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/surround.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/SurroundSound.opus"
-  },
-  {
-    "title": "Tere Bina",
-    "artist": "A.R. Rahman",
-    "album": "Guru",
-    "color": "#009688",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/terebina.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/TereBina.opus"
-  },
-  {
-    "title": "Tumi Jaio Na",
-    "artist": "Coke Studio Bangla",
-    "album": "Season 2",
-    "color": "#ff5722",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/tumijaionah.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/TumiJaioNa.opus"
-  },
-  {
-    "title": "Heaven and Back",
-    "artist": "Chase Atlantic",
-    "album": "PHASES",
-    "color": "#ce93d8",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/heavenandback.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/heavenandback.opus"
-  },
-  {
-    "title": "WGFT",
-    "artist": "The Kid LAROI",
-    "album": "F*CK LOVE",
-    "color": "#000000",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/wgft.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/wgft.opus"
-  },
-  {
-    "title": "Bairan Banjaare",
-    "artist": "Sunidhi Chauhan",
-    "album": "Single",
-    "color": "#fb8c00",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-05-28_6850%5B1%5D.png",
-    "url": "https://upcdn.io/kW2K8nP/raw/Bairan%20Banjaare%20(pagalall.com).mp3"
-  },
-  {
-    "title": "Wishes",
-    "artist": "Hasan Raheem, Talwiinder & Umair",
-    "album": "Maybe, It's Love - EP",
-    "color": "#5c6bc0",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-31_21-20-29_0352%5B1%5D.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/Wishes%20(PenduJatt.Com.Se).mp3"
-  },
-  {
-    "title": "her",
-    "artist": "JVKE",
-    "album": "this is what ____ feels like",
-    "color": "#e1bee7",
-    "thumb": "https://upcdn.io/kW2K8nP/raw/artworks-kN1DxVByBjrx-0-t500x500.jpg",
-    "url": "https://upcdn.io/kW2K8nP/raw/jvke%20her.mp3"
-  }
+  { "title": "3 Strikes", "artist": "Terror Jr", "album": "Bop City", "color": "#ff4d00", "thumb": "https://upcdn.io/kW2K8nP/raw/3strikes.jpg", "url": "https://upcdn.io/kW2K8nP/raw/3Strikes.opus" },
+  { "title": "Aasa Kooda", "artist": "Sai Abhyankkar", "album": "Single", "color": "#ffcc00", "thumb": "https://upcdn.io/kW2K8nP/raw/asakooda.jpg", "url": "https://upcdn.io/kW2K8nP/raw/AasaKooda.opus" },
+  { "title": "Bargad", "artist": "Talwiinder", "album": "Single", "color": "#4a4a4a", "thumb": "https://upcdn.io/kW2K8nP/raw/bargad.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Bargad.mp3" },
+  { "title": "Batashe Kan Pete", "artist": "Lopamudra Mitra", "album": "Single", "color": "#336699", "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-15-08_3463%5B1%5D.png", "url": "https://upcdn.io/kW2K8nP/raw/BatasheKan.opus" },
+  { "title": "Beni Khuley", "artist": "Habib Wahid", "album": "Single", "color": "#e91e63", "thumb": "https://upcdn.io/kW2K8nP/raw/benikhuley.jpg", "url": "https://upcdn.io/kW2K8nP/raw/BeniKhuley.opus" },
+  { "title": "Blue Eyes", "artist": "Yo Yo Honey Singh", "album": "Single", "color": "#0000ff", "thumb": "https://upcdn.io/kW2K8nP/raw/blueyes.jpg", "url": "https://upcdn.io/kW2K8nP/raw/BlueEyes.mp3" },
+  { "title": "DJ Waley Babu", "artist": "Badshah", "album": "Single", "color": "#000000", "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-14-45_8505%5B1%5D.png", "url": "https://upcdn.io/kW2K8nP/raw/DJWaleyBabu.opus" },
+  { "title": "Dancin", "artist": "Aaron Smith", "album": "Dancin Remix", "color": "#9c27b0", "thumb": "https://upcdn.io/kW2K8nP/raw/Dancin.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Aaron%20Smith%20-%20Dancin%20(KRONO%20Remix)%20-%20Lyrics.mp3" },
+  { "title": "Die For You", "artist": "The Weeknd", "album": "Starboy", "color": "#8844cc", "thumb": "https://upcdn.io/kW2K8nP/raw/dieforyou.jpg", "url": "https://upcdn.io/kW2K8nP/raw/DieForYou.opus" },
+  { "title": "Double Take", "artist": "dhruv", "album": "raindrops", "color": "#90caf9", "thumb": "https://upcdn.io/kW2K8nP/raw/doubletake.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Doubletake.opus" },
+  { "title": "Ek Akash Tara", "artist": "Lucky Akhand", "album": "Single", "color": "#37474f", "thumb": "https://upcdn.io/kW2K8nP/raw/ekakashtarah.jpg", "url": "https://upcdn.io/kW2K8nP/raw/EkAkashTara.opus" },
+  { "title": "HUSN", "artist": "Anuv Jain", "album": "Single", "color": "#8d6e63", "thumb": "https://upcdn.io/kW2K8nP/raw/husn.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Husn%20(PenduJatt.Com.Se).mp3" },
+  { "title": "Har Funn Maula", "artist": "Vishal-Shekhar", "album": "Koi Jaane Na", "color": "#ffc107", "thumb": "https://upcdn.io/kW2K8nP/raw/harfunmaula.jpg", "url": "https://upcdn.io/kW2K8nP/raw/HarFunnMaula.opus" },
+  { "title": "Deja Vu", "artist": "Post Malone", "album": "Stoney", "color": "#795548", "thumb": "https://upcdn.io/kW2K8nP/raw/hotelroom.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Hotelroom.opus" },
+  { "title": "Into It", "artist": "Chase Atlantic", "album": "Chase Atlantic", "color": "#000000", "thumb": "https://upcdn.io/kW2K8nP/raw/intoit.jpg", "url": "https://upcdn.io/kW2K8nP/raw/IntoIt.opus" },
+  { "title": "Iss Tarah", "artist": "Arijit Singh", "album": "Single", "color": "#b71c1c", "thumb": "https://upcdn.io/kW2K8nP/raw/isstarah.jpg", "url": "https://upcdn.io/kW2K8nP/raw/IssTarah.mp3" },
+  { "title": "Kinni", "artist": "Diljit Dosanjh", "album": "Ghost", "color": "#4caf50", "thumb": "https://upcdn.io/kW2K8nP/raw/kinni.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Kinni.opus" },
+  { "title": "All Types LilaBali", "artist": "Sliime", "album": "Single", "color": "#d32f2f", "thumb": "https://upcdn.io/kW2K8nP/raw/Alltypes.jpg", "url": "https://upcdn.io/kW2K8nP/raw/LILABALI.opus" },
+  { "title": "Moromor Buli Kom", "artist": "Papon", "album": "Single", "color": "#2e7d32", "thumb": "https://upcdn.io/kW2K8nP/raw/mormor.jpg", "url": "https://upcdn.io/kW2K8nP/raw/MoromorBuliKom.opus" },
+  { "title": "Often", "artist": "The Weeknd", "album": "Beauty Behind the Madness", "color": "#121212", "thumb": "https://upcdn.io/kW2K8nP/raw/often.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Often.opus" },
+  { "title": "Prostab", "artist": "Kazi Shuvo", "album": "Single", "color": "#607d8b", "thumb": "https://upcdn.io/kW2K8nP/raw/prostab.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Prostab.opus" },
+  { "title": "Surround Sound", "artist": "JID", "album": "The Forever Story", "color": "#ffeb3b", "thumb": "https://upcdn.io/kW2K8nP/raw/surround.jpg", "url": "https://upcdn.io/kW2K8nP/raw/SurroundSound.opus" },
+  { "title": "Tere Bina", "artist": "A.R. Rahman", "album": "Guru", "color": "#009688", "thumb": "https://upcdn.io/kW2K8nP/raw/terebina.jpg", "url": "https://upcdn.io/kW2K8nP/raw/TereBina.opus" },
+  { "title": "Tumi Jaio Na", "artist": "Coke Studio Bangla", "album": "Season 2", "color": "#ff5722", "thumb": "https://upcdn.io/kW2K8nP/raw/tumijaionah.jpg", "url": "https://upcdn.io/kW2K8nP/raw/TumiJaioNa.opus" },
+  { "title": "Heaven and Back", "artist": "Chase Atlantic", "album": "PHASES", "color": "#ce93d8", "thumb": "https://upcdn.io/kW2K8nP/raw/heavenandback.jpg", "url": "https://upcdn.io/kW2K8nP/raw/heavenandback.opus" },
+  { "title": "WGFT", "artist": "The Kid LAROI", "album": "F*CK LOVE", "color": "#000000", "thumb": "https://upcdn.io/kW2K8nP/raw/wgft.jpg", "url": "https://upcdn.io/kW2K8nP/raw/wgft.opus" },
+  { "title": "Bairan Banjaare", "artist": "Sunidhi Chauhan", "album": "Single", "color": "#fb8c00", "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-30_23-05-28_6850%5B1%5D.png", "url": "https://upcdn.io/kW2K8nP/raw/Bairan%20Banjaare%20(pagalall.com).mp3" },
+  { "title": "Wishes", "artist": "Hasan Raheem, Talwiinder & Umair", "album": "Maybe, It's Love - EP", "color": "#5c6bc0", "thumb": "https://upcdn.io/kW2K8nP/raw/ResizedImage_2026-03-31_21-20-29_0352%5B1%5D.jpg", "url": "https://upcdn.io/kW2K8nP/raw/Wishes%20(PenduJatt.Com.Se).mp3" },
+  { "title": "her", "artist": "JVKE", "album": "this is what ____ feels like", "color": "#e1bee7", "thumb": "https://upcdn.io/kW2K8nP/raw/artworks-kN1DxVByBjrx-0-t500x500.jpg", "url": "https://upcdn.io/kW2K8nP/raw/jvke%20her.mp3" },
+  { "title": "Majboor (Unplugged)", "artist": "Sheheryar Rehan and Zoha Waseem", "album": "Single", "color": "#006064", "thumb": "https://upcdn.io/kW2K8nP/raw/IMG_20260403_180036.png", "url": "https://upcdn.io/kW2K8nP/raw/Majboor%20(Unplugged)%20%5BdLAYG-TjnVQ%5D.opus" }
 ]
